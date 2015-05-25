@@ -22,6 +22,8 @@ public interface IVBMessage extends Serializable {
 		ChangeAreticleMessageAnswer,
 		ArticleListMessageRequest,
 		ArticleListMessageAnswer,
+		BuyArticleMessageRequest,
+		BuyArticleMessageAnswer,
 		LogoutMessageRequest,
 		LogoutMessageAnswer
 	}

@@ -2,7 +2,7 @@ package messages;
 
 public class LoginMessageAnswer implements IVBMessage {
 
-	public String errorMsg;
+	private LoginMessageAnswerPayload payload;
 	@Override
 	public MessageType MsgType() {
 		return IVBMessage.MessageType.LoginMessageAnswer;
@@ -11,7 +11,7 @@ public class LoginMessageAnswer implements IVBMessage {
 	@Override
 	public Object getPayload() {
 		// TODO Auto-generated method stub
-		return errorMsg;
+		return payload;
 	}
 
 }

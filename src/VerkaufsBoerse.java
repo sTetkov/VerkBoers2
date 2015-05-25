@@ -1,5 +1,9 @@
-import java.sql.*; 
+import java.sql.*;
 import java.util.Vector;
+import DBClasses.Article;
+import DBClasses.IBankData;
+import DBClasses.Transaction;
+import DBClasses.User;
 
 public class VerkaufsBoerse {
 
@@ -8,7 +12,6 @@ public class VerkaufsBoerse {
 	private static Vector<Article> articleVec;
 	private static Vector<IBankData> bDataVec;
 	private static Vector<Transaction> transacVec;
-	private static Vector<Offer> offerVec;
 	
 	/**
 	 * @param args
