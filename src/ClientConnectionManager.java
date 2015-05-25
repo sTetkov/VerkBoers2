@@ -30,7 +30,7 @@ public class ClientConnectionManager {
 	    try{
 	    MessagePackage msgPck=new MessagePackage(username,pwd,msg);
 	    socket.connect(sep);
-	    out.writeObject(msg);
+	    out.writeObject(msgPck);
 	    out.close();
 	    IVBMessage inMsg=(IVBMessage)in.readObject();
 	    switch(inMsg.MsgType())
