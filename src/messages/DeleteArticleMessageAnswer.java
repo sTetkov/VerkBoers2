@@ -2,16 +2,20 @@ package messages;
 
 public class DeleteArticleMessageAnswer implements IVBMessage {
 
-    @Override
-    public MessageType MsgType() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	GenericAnswerPayload payload;
 
-    @Override
-    public Object getPayload() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	public DeleteArticleMessageAnswer(boolean b, String string) {
+		payload = new GenericAnswerPayload(b, string);
+	}
+
+	@Override
+	public MessageType MsgType() {
+		return IVBMessage.MessageType.DeleteArticleMessageAnswer;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }

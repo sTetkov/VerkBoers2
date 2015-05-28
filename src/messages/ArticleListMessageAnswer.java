@@ -1,17 +1,26 @@
 package messages;
 
+import java.util.Vector;
+import DBClasses.Article;
+
 public class ArticleListMessageAnswer implements IVBMessage {
 
-    @Override
-    public MessageType MsgType() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	ArticleListAnswerPayload payload;
 
-    @Override
-    public Object getPayload() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	public ArticleListMessageAnswer(boolean b, String string,
+			Vector<Article> articleList) {
+		payload = new ArticleListAnswerPayload(b, string, articleList);
+	}
+
+	@Override
+	public MessageType MsgType() {
+		// TODO Auto-generated method stub
+		return IVBMessage.MessageType.ArticleListMessageAnswer;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }

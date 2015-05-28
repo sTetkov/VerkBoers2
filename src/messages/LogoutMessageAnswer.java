@@ -2,16 +2,20 @@ package messages;
 
 public class LogoutMessageAnswer implements IVBMessage {
 
-    @Override
-    public MessageType MsgType() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	GenericAnswerPayload payload;
 
-    @Override
-    public Object getPayload() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	public LogoutMessageAnswer(boolean b, String string) {
+		payload = new GenericAnswerPayload(b, string);
+	}
+
+	@Override
+	public MessageType MsgType() {
+		return IVBMessage.MessageType.LogoutMessageAnswer;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }

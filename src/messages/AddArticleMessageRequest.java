@@ -4,20 +4,21 @@ import DBClasses.Article;
 
 public class AddArticleMessageRequest implements IVBMessage {
 
-    private Article payload;
-    public AddArticleMessageRequest(Article art) {
-	payload=art;
-    }
+	private Article payload;
 
-    @Override
-    public MessageType MsgType() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	public AddArticleMessageRequest(Article art) {
+		payload = art;
+	}
 
-    @Override
-    public Object getPayload() {
-	return payload;
-    }
+	@Override
+	public MessageType MsgType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }
