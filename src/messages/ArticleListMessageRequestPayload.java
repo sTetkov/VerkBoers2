@@ -1,24 +1,26 @@
 package messages;
 
-public class ArticleListMessageRequestPayload {
-	private int userId;
+import java.io.Serializable;
 
-	public int getUserId() {
-		return userId;
-	}
+public class ArticleListMessageRequestPayload implements Serializable {
+    private int userId;
 
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+    public int getUserId() {
+	return userId;
+    }
 
-	public boolean isShowUserIdArticles() {
-		return showUserIdArticles;
-	}
+    public void setUserId(int userId) {
+	this.userId = userId;
+    }
 
-	public void setShowUserIdArticles(boolean showUserIdArticles) {
-		this.showUserIdArticles = showUserIdArticles;
-	}
+    public boolean isShowUserIdArticles() {
+	return showUserIdArticles;
+    }
 
-	private boolean showUserIdArticles;
+    public void setShowUserIdArticles(boolean showUserIdArticles) {
+	this.showUserIdArticles = showUserIdArticles;
+    }
+
+    private boolean showUserIdArticles;
 
 }

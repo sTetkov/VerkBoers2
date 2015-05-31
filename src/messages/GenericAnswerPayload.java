@@ -1,29 +1,31 @@
 package messages;
 
-public class GenericAnswerPayload {
+import java.io.Serializable;
 
-	private boolean operationSuccess;
+public class GenericAnswerPayload implements Serializable {
 
-	public boolean isOperationSuccess() {
-		return operationSuccess;
-	}
+    private boolean operationSuccess;
 
-	public void setOperationSuccess(boolean operationSuccess) {
-		this.operationSuccess = operationSuccess;
-	}
+    public boolean isOperationSuccess() {
+	return operationSuccess;
+    }
 
-	public String getMsg() {
-		return msg;
-	}
+    public void setOperationSuccess(boolean operationSuccess) {
+	this.operationSuccess = operationSuccess;
+    }
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+    public String getMsg() {
+	return msg;
+    }
 
-	private String msg;
+    public void setMsg(String msg) {
+	this.msg = msg;
+    }
 
-	public GenericAnswerPayload(boolean b, String msg) {
-		this.operationSuccess = b;
-		this.msg = msg;
-	}
+    private String msg;
+
+    public GenericAnswerPayload(boolean b, String msg) {
+	this.operationSuccess = b;
+	this.msg = msg;
+    }
 }

@@ -2,16 +2,24 @@ package messages;
 
 public class NewUserConfirmationCodeRequest implements IVBMessage {
 
-	@Override
-	public MessageType MsgType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private NewUserConfirmationCodePayload payload;
 
-	@Override
-	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public NewUserConfirmationCodeRequest(String eMail, String code) {
+	payload = new NewUserConfirmationCodePayload();
+	payload.setCode(code);
+	payload.seteMail(eMail);
+    }
+
+    @Override
+    public MessageType MsgType() {
+	// TODO Auto-generated method stub
+	return IVBMessage.MessageType.NewUserConfirmationCodeRequest;
+    }
+
+    @Override
+    public Object getPayload() {
+	// TODO Auto-generated method stub
+	return payload;
+    }
 
 }
