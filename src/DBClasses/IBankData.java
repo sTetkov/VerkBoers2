@@ -1,6 +1,6 @@
 package DBClasses;
 
 public interface IBankData {
-    public String getType();
+	public String getType();
 
 }

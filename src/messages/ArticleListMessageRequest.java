@@ -2,22 +2,22 @@ package messages;
 
 public class ArticleListMessageRequest implements IVBMessage {
 
-    ArticleListMessageRequestPayload payload;
+	ArticleListMessageRequestPayload payload;
 
-    public ArticleListMessageRequest(int userId, boolean getArticlesFormUser) {
-	payload = new ArticleListMessageRequestPayload();
-	payload.setShowUserIdArticles(getArticlesFormUser);
-	payload.setUserId(userId);
-    }
+	public ArticleListMessageRequest(int userId, boolean getArticlesFormUser) {
+		payload = new ArticleListMessageRequestPayload();
+		payload.setShowUserIdArticles(getArticlesFormUser);
+		payload.setUserId(userId);
+	}
 
-    @Override
-    public MessageType MsgType() {
-	return IVBMessage.MessageType.ArticleListMessageRequest;
-    }
+	@Override
+	public MessageType MsgType() {
+		return IVBMessage.MessageType.ArticleListMessageRequest;
+	}
 
-    @Override
-    public Object getPayload() {
-	return payload;
-    }
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }

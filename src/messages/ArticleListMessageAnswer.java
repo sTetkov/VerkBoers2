@@ -5,22 +5,22 @@ import DBClasses.Article;
 
 public class ArticleListMessageAnswer implements IVBMessage {
 
-    ArticleListAnswerPayload payload;
+	ArticleListAnswerPayload payload;
 
-    public ArticleListMessageAnswer(boolean b, String string,
-	    Vector<Article> articleList) {
-	payload = new ArticleListAnswerPayload(b, string, articleList);
-    }
+	public ArticleListMessageAnswer(boolean b, String string,
+			Vector<Article> articleList) {
+		payload = new ArticleListAnswerPayload(b, string, articleList);
+	}
 
-    @Override
-    public MessageType MsgType() {
-	// TODO Auto-generated method stub
-	return IVBMessage.MessageType.ArticleListMessageAnswer;
-    }
+	@Override
+	public MessageType MsgType() {
+		// TODO Auto-generated method stub
+		return IVBMessage.MessageType.ArticleListMessageAnswer;
+	}
 
-    @Override
-    public Object getPayload() {
-	return payload;
-    }
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
 
 }

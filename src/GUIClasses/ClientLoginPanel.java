@@ -5,17 +5,43 @@
  */
 package GUIClasses;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import messages.IVBMessage;
+import messages.LoginMessageAnswerPayload;
+import messages.LoginMessageRequest;
+import messages.LoginMessageRequestPayload;
+
+import DBClasses.User;
+import HelpCLasses.ClientConnectionException;
+import HelpCLasses.ClientConnectionManager;
+import HelpCLasses.ICSMessageEventReceiver;
+
 /**
  *
  * @author sascha
  */
-public class ClientLoginPanel extends javax.swing.JPanel {
+public class ClientLoginPanel extends javax.swing.JPanel implements ICSMessageEventReceiver{
 
+	private User user;
+	private ClientConnectionManager ccm;
+	private ClientMainFrame parent;
+	private String currentState;
+	private JDialog dialog;
+	private JLabel dialogLabel;
     /**
      * Creates new form ClientLoginPanel
+     * @param clientMainFrame 
+     * @param user 
+     * @param ccm 
      */
-    public ClientLoginPanel() {
+    public ClientLoginPanel(User user, ClientMainFrame clientMainFrame, ClientConnectionManager ccm) {
         initComponents();
+        this.user=user;
+        this.ccm=ccm;
+        this.parent=clientMainFrame;
     }
 
     /**
@@ -121,19 +147,37 @@ public class ClientLoginPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_okButtonActionPerformed
+        if(uNameField.getText().isEmpty() || pwdField.getText().isEmpty())
+        {
+        	JOptionPane.showMessageDialog(this, "Please inser username and password.");
+        	return;
+        }
+        LoginMessageRequest msg=new LoginMessageRequest();
+        msg.payload = new LoginMessageRequestPayload();
+    	msg.payload.username = uNameField.getText();
+    	msg.payload.password = pwdField.getText();
+    	ccm.setUsername(uNameField.getText());
+        ccm.setPwd(pwdField.getText());
+        ccm.addMessage(msg, this);
+        dialog = new JDialog();
+        dialog.setTitle("Waiting for Login");
+        dialogLabel=new JLabel();
+        dialogLabel.setText("Waiting to send Message...");
+        dialog.add(dialogLabel);
+        dialog.setModal(true);
+        dialog.show();
+    }
 
     private void newUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newUserButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_newUserButtonActionPerformed
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
-        // TODO add your handling code here:
+        parent.quitApplication();
     }//GEN-LAST:event_quitButtonActionPerformed
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+	// Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -143,4 +187,22 @@ public class ClientLoginPanel extends javax.swing.JPanel {
     private javax.swing.JButton quitButton;
     private javax.swing.JTextField uNameField;
     // End of variables declaration//GEN-END:variables
+	@Override
+	public void MessageSent() {
+		dialogLabel.setText("Message Sent, Waiting for answer");
+		dialog.invalidate();
+	}
+
+	@Override
+	public void AnswerReceived(IVBMessage answer) {
+		dialog.hide();	
+		user=((LoginMessageAnswerPayload)(answer.getPayload())).getUserData();
+		parent.LoggedIn(user);
+	}
+
+	@Override
+	public void CommunicationError(IVBMessage answer) {
+		// TODO Auto-generated method stub
+		
+	}
 }

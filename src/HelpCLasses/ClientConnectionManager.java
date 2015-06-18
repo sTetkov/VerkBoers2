@@ -6,16 +6,36 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import DBClasses.User;
 
 import messages.*;
 
-public class ClientConnectionManager {
+public class ClientConnectionManager implements Runnable{
 
-    private String username;
+    public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPwd() {
+		return pwd;
+	}
+
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
+
+	private String username;
     private String pwd;
 
+    private Queue<ClientMessageThreadObject> queue;
+    
     public String getHostName() {
 	return hostName;
     }
@@ -40,6 +60,7 @@ public class ClientConnectionManager {
     private ObjectOutputStream out;
 
     public ClientConnectionManager() {
+    	queue=new LinkedList<ClientMessageThreadObject>();
     }
 
     public User Login(String username, String pwd)
@@ -125,5 +146,28 @@ public class ClientConnectionManager {
 	}
 	return inMsg;
     }
+
+	@Override
+	public void run() {
+		while(true)
+		{
+			while(!queue.isEmpty())
+			{
+				ClientMessageThreadObject thr=queue.poll();
+				thr.setHostName(hostName);
+				thr.setPort(port);
+				thr.setUsername(username);
+				thr.setPassword(pwd);
+				Thread thread = new Thread(thr);
+				thread.start();
+			}
+		}
+	}
+	
+	public void addMessage(IVBMessage msg,ICSMessageEventReceiver customer)
+	{
+		ClientMessageThreadObject thr=new ClientMessageThreadObject(msg,customer);
+		queue.add(thr);
+	}
 
 }

@@ -5,31 +5,31 @@ import java.io.Serializable;
 import DBClasses.Article;
 
 public class BuyArticleMessageRequestPayload implements Serializable {
-    public int getUserId() {
-	return userId;
-    }
+	public int getUserId() {
+		return userId;
+	}
 
-    public void setUserId(int userId) {
-	this.userId = userId;
-    }
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 
-    public float getAmount() {
-	return amount;
-    }
+	public float getAmount() {
+		return amount;
+	}
 
-    public void setAmount(float amount) {
-	this.amount = amount;
-    }
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
-    public Article getArticle() {
-	return article;
-    }
+	public Article getArticle() {
+		return article;
+	}
 
-    public void setArticle(Article article) {
-	this.article = article;
-    }
+	public void setArticle(Article article) {
+		this.article = article;
+	}
 
-    private int userId;
-    private float amount;
-    private Article article;
+	private int userId;
+	private float amount;
+	private Article article;
 }

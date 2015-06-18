@@ -1,16 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUIClasses;
+
+import DBClasses.User;
+import HelpCLasses.ClientConnectionManager;
 
 /**
  *
- * @author sascha
+ * @author Sascha Tetkov
  */
 public class ClientMainFrame extends javax.swing.JFrame {
 
+	private User user;
+	private ClientConnectionManager ccm;
     /**
      * Creates new form ClientMainFrame
      */
@@ -21,7 +21,7 @@ public class ClientMainFrame extends javax.swing.JFrame {
 
     private void loadLoginPanel()
     {
-        ClientLoginPanel clp=new ClientLoginPanel();
+        ClientLoginPanel clp=new ClientLoginPanel(user,this,ccm);
         this.setContentPane(clp);
         
     }
@@ -195,4 +195,13 @@ public class ClientMainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuBar mainFrameMenuBar;
     // End of variables declaration//GEN-END:variables
+	public void quitApplication() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void LoggedIn(User user2) {
+		// TODO Auto-generated method stub
+		
+	}
 }
