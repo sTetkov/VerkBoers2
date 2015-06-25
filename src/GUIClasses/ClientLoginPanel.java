@@ -13,6 +13,7 @@ import messages.IVBMessage;
 import messages.LoginMessageAnswerPayload;
 import messages.LoginMessageRequest;
 import messages.LoginMessageRequestPayload;
+import messages.OperationFailedAnswer;
 
 import DBClasses.User;
 import HelpCLasses.ClientConnectionException;
@@ -159,6 +160,7 @@ public class ClientLoginPanel extends javax.swing.JPanel implements ICSMessageEv
     	ccm.setUsername(uNameField.getText());
         ccm.setPwd(pwdField.getText());
         ccm.addMessage(msg, this);
+        okButton.disable();
         dialog = new JDialog();
         dialog.setTitle("Waiting for Login");
         dialogLabel=new JLabel();
@@ -198,11 +200,12 @@ public class ClientLoginPanel extends javax.swing.JPanel implements ICSMessageEv
 		dialog.hide();	
 		user=((LoginMessageAnswerPayload)(answer.getPayload())).getUserData();
 		parent.LoggedIn(user);
+		okButton.enable();
 	}
 
 	@Override
 	public void CommunicationError(IVBMessage answer) {
-		// TODO Auto-generated method stub
-		
+		okButton.enable();
+		JOptionPane.showMessageDialog(parent, "ERROR: "+((OperationFailedAnswer)answer).getReasons());
 	}
 }

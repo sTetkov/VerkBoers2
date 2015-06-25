@@ -200,8 +200,9 @@ public class ClientMainFrame extends javax.swing.JFrame {
 		
 	}
 
-	public void LoggedIn(User user2) {
-		// TODO Auto-generated method stub
-		
+	public void LoggedIn(User user) {
+		this.user=user;
+		ClientArticleListPanel calp=new ClientArticleListPanel(user,false,this); 
+		this.setContentPane(calp);
 	}
 }
