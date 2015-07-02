@@ -2,16 +2,21 @@ package messages;
 
 public class LogoutMessageRequest implements IVBMessage {
 
+	private int userID;
+	
+	public LogoutMessageRequest(int userID)
+	{
+		this.userID=userID;
+	}
+	
 	@Override
 	public MessageType MsgType() {
-		// TODO Auto-generated method stub
-		return null;
+		return IVBMessage.MessageType.LogoutMessageRequest;
 	}
 
 	@Override
 	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Integer(userID);
 	}
 
 }

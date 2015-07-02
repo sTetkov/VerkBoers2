@@ -17,7 +17,9 @@ import messages.OperationFailedAnswer;
  */
 public class ClientMessageThreadObject implements Runnable {
 
-	public ClientMessageThreadObject(IVBMessage message,
+	private int opID;
+	
+	public ClientMessageThreadObject(int opID, IVBMessage message,
 			ICSMessageEventReceiver customer) {
 		this.customer=customer;
 		this.message=message;
@@ -84,7 +86,7 @@ public class ClientMessageThreadObject implements Runnable {
 		    out = new ObjectOutputStream(socket.getOutputStream());
 
 		    out.writeObject(msgPck);
-
+		    customer.MessageSent(opID);
 		    in = new ObjectInputStream(socket.getInputStream());
 		    inMsg = (IVBMessage) in.readObject();
 		    socket.close();
@@ -93,7 +95,7 @@ public class ClientMessageThreadObject implements Runnable {
 			LoginMessageAnswerPayload payload = (LoginMessageAnswerPayload) inMsg
 				.getPayload();
 			if (!payload.isLoginSucces())
-			    customer.CommunicationError(new OperationFailedAnswer("Login Failed: "+payload.getFailureReason()));
+			    customer.CommunicationError(opID,new OperationFailedAnswer("Login Failed: "+payload.getFailureReason()));
 		    }
 			break;
 		    case NewUserMessageAnswer:
@@ -117,19 +119,19 @@ public class ClientMessageThreadObject implements Runnable {
 		    case LogoutMessageAnswer:
 			break;
 		    case OperationFailedAnswer:
-		    	customer.CommunicationError(inMsg);
+		    	customer.CommunicationError(opID,inMsg);
 		    default:
-		    	customer.CommunicationError(new OperationFailedAnswer("Operation Failed: Unknonw answer message"));
+		    	customer.CommunicationError(opID,new OperationFailedAnswer("Operation Failed: Unknonw answer message"));
 		    }
 		} catch (IOException e) {
 		    System.out.println(e.getMessage());
-		    customer.CommunicationError(new OperationFailedAnswer("Something failed: "+ e.getMessage()));
+		    customer.CommunicationError(opID,new OperationFailedAnswer("Something failed: "+ e.getMessage()));
 		} catch (ClassNotFoundException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
-		    customer.CommunicationError(new OperationFailedAnswer("Something failed: "+ e.getMessage()));
+		    customer.CommunicationError(opID,new OperationFailedAnswer("Something failed: "+ e.getMessage()));
 		}
-		customer.AnswerReceived(inMsg);
+		customer.AnswerReceived(opID,inMsg);
 
 	}
 

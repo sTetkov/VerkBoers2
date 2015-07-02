@@ -164,9 +164,9 @@ public class ClientConnectionManager implements Runnable{
 		}
 	}
 	
-	public void addMessage(IVBMessage msg,ICSMessageEventReceiver customer)
+	public void addMessage(int opID, IVBMessage msg,ICSMessageEventReceiver customer)
 	{
-		ClientMessageThreadObject thr=new ClientMessageThreadObject(msg,customer);
+		ClientMessageThreadObject thr=new ClientMessageThreadObject(opID,msg,customer);
 		queue.add(thr);
 	}
 
