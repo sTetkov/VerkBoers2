@@ -1,4 +1,5 @@
 package HelpCLasses;
+
 import java.util.Properties;
 
 import javax.mail.*;

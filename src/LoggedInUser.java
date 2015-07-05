@@ -2,52 +2,52 @@ import java.sql.Timestamp;
 
 public class LoggedInUser {
 
-	public LoggedInUser(int id, String eMail) {
-		userId = id;
-		this.eMail = eMail;
-	}
+    public LoggedInUser(int id, String eMail) {
+	userId = id;
+	this.eMail = eMail;
+    }
 
-	public int getUserId() {
-		return userId;
-	}
+    public int getUserId() {
+	return userId;
+    }
 
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+    public void setUserId(int userId) {
+	this.userId = userId;
+    }
 
-	public String geteMail() {
-		return eMail;
-	}
+    public String geteMail() {
+	return eMail;
+    }
 
-	public void seteMail(String eMail) {
-		this.eMail = eMail;
-	}
+    public void seteMail(String eMail) {
+	this.eMail = eMail;
+    }
 
-	private int userId;
-	private String eMail;
-	private Timestamp tStamp;
+    private int userId;
+    private String eMail;
+    private Timestamp tStamp;
 
-	public boolean equals(LoggedInUser usr) {
-		if (userId == usr.getUserId())
-			return true;
-		return false;
-	}
+    public boolean equals(LoggedInUser usr) {
+	if (userId == usr.getUserId())
+	    return true;
+	return false;
+    }
 
-	public String toString() {
-		return userId + " - " + eMail;
-	}
+    public String toString() {
+	return userId + " - " + eMail;
+    }
 
-	public Timestamp gettStamp() {
-		return tStamp;
-	}
+    public Timestamp gettStamp() {
+	return tStamp;
+    }
 
-	public void StampRecord() {
-		java.util.Calendar calendar = java.util.Calendar.getInstance();
-		java.util.Date now = calendar.getTime();
-		tStamp = new java.sql.Timestamp(now.getTime());
-	}
+    public void StampRecord() {
+	java.util.Calendar calendar = java.util.Calendar.getInstance();
+	java.util.Date now = calendar.getTime();
+	tStamp = new java.sql.Timestamp(now.getTime());
+    }
 
-	public void settStamp(Timestamp tStamp) {
-		this.tStamp = tStamp;
-	}
+    public void settStamp(Timestamp tStamp) {
+	this.tStamp = tStamp;
+    }
 }

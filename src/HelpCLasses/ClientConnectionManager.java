@@ -1,4 +1,5 @@
 package HelpCLasses;
+
 import java.io.IOException;
 
 import java.io.ObjectInputStream;
@@ -13,29 +14,29 @@ import DBClasses.User;
 
 import messages.*;
 
-public class ClientConnectionManager implements Runnable{
+public class ClientConnectionManager implements Runnable {
 
     public String getUsername() {
-		return username;
-	}
+	return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+	this.username = username;
+    }
 
-	public String getPwd() {
-		return pwd;
-	}
+    public String getPwd() {
+	return pwd;
+    }
 
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
-	}
+    public void setPwd(String pwd) {
+	this.pwd = pwd;
+    }
 
-	private String username;
+    private String username;
     private String pwd;
 
     private Queue<ClientMessageThreadObject> queue;
-    
+
     public String getHostName() {
 	return hostName;
     }
@@ -60,7 +61,7 @@ public class ClientConnectionManager implements Runnable{
     private ObjectOutputStream out;
 
     public ClientConnectionManager() {
-    	queue=new LinkedList<ClientMessageThreadObject>();
+	queue = new LinkedList<ClientMessageThreadObject>();
     }
 
     public User Login(String username, String pwd)
@@ -147,27 +148,26 @@ public class ClientConnectionManager implements Runnable{
 	return inMsg;
     }
 
-	@Override
-	public void run() {
-		while(true)
-		{
-			while(!queue.isEmpty())
-			{
-				ClientMessageThreadObject thr=queue.poll();
-				thr.setHostName(hostName);
-				thr.setPort(port);
-				thr.setUsername(username);
-				thr.setPassword(pwd);
-				Thread thread = new Thread(thr);
-				thread.start();
-			}
-		}
+    @Override
+    public void run() {
+	while (true) {
+	    while (!queue.isEmpty()) {
+		ClientMessageThreadObject thr = queue.poll();
+		thr.setHostName(hostName);
+		thr.setPort(port);
+		thr.setUsername(username);
+		thr.setPassword(pwd);
+		Thread thread = new Thread(thr);
+		thread.start();
+	    }
 	}
-	
-	public void addMessage(int opID, IVBMessage msg,ICSMessageEventReceiver customer)
-	{
-		ClientMessageThreadObject thr=new ClientMessageThreadObject(opID,msg,customer);
-		queue.add(thr);
-	}
+    }
+
+    public void addMessage(int opID, IVBMessage msg,
+	    ICSMessageEventReceiver customer) {
+	ClientMessageThreadObject thr = new ClientMessageThreadObject(opID,
+		msg, customer);
+	queue.add(thr);
+    }
 
 }

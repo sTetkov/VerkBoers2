@@ -2,16 +2,19 @@ package messages;
 
 public class DeleteArticleMessageRequest implements IVBMessage {
 
-	@Override
-	public MessageType MsgType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private int artID;
+    public DeleteArticleMessageRequest(int articleID) {
+	artID=articleID;
+    }
 
-	@Override
-	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public MessageType MsgType() {
+	return IVBMessage.MessageType.DeleteArticleMessageRequest;
+    }
+
+    @Override
+    public Object getPayload() {
+	return new Integer(artID);
+    }
 
 }

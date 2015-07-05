@@ -2,22 +2,22 @@ package messages;
 
 public class NewUserConfirmationCodeAnswer implements IVBMessage {
 
-	private GenericAnswerPayload payload;
+    private GenericAnswerPayload payload;
 
-	public NewUserConfirmationCodeAnswer(boolean b, String string) {
-		payload = new GenericAnswerPayload(b, string);
-	}
+    public NewUserConfirmationCodeAnswer(boolean b, String string) {
+	payload = new GenericAnswerPayload(b, string);
+    }
 
-	@Override
-	public MessageType MsgType() {
-		// TODO Auto-generated method stub
-		return IVBMessage.MessageType.NewUserConfirmationCodeAnswer;
-	}
+    @Override
+    public MessageType MsgType() {
+	// TODO Auto-generated method stub
+	return IVBMessage.MessageType.NewUserConfirmationCodeAnswer;
+    }
 
-	@Override
-	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return payload;
-	}
+    @Override
+    public Object getPayload() {
+	// TODO Auto-generated method stub
+	return payload;
+    }
 
 }

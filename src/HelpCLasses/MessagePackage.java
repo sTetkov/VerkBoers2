@@ -1,4 +1,5 @@
 package HelpCLasses;
+
 import java.io.Serializable;
 
 import messages.IVBMessage;

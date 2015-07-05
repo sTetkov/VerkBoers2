@@ -1,156 +1,216 @@
 package Client;
 
 import messages.ArticleListMessageRequest;
+import messages.ChangeArticleMessageRequest;
+import messages.ChangeUserDataMessageRequest;
+import messages.DeleteArticleMessageRequest;
+import messages.DeleteUserMessageRequest;
 import messages.IVBMessage;
 import messages.LoginMessageRequest;
 import messages.LoginMessageRequestPayload;
 import messages.LogoutMessageRequest;
+import messages.NewUserConfirmationCodeRequest;
+import messages.NewUserMessageRequest;
 import DBClasses.Article;
 import DBClasses.User;
-import HelpCLasses.ClientConnectionManager;
-import HelpCLasses.ICSMessageEventReceiver;
-import HelpCLasses.IClientGUIListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import messages.LoginMessageAnswerPayload;
 
 public class ClientCore implements ICSMessageEventReceiver {
-	
-	private ClientConnectionManager ccm;
-	private User user;
-	private int opID;
-	private Map<Integer,IClientGUIListener> map;
-	
-	public ClientCore()
-	{
-		 map=new HashMap<Integer,IClientGUIListener>();
-	}
-	
-	public void Login(String username,String pwd, IClientGUIListener customer)
-	{
-		opID++;
-		LoginMessageRequest msg=new LoginMessageRequest();
-	    msg.payload = new LoginMessageRequestPayload();
-	    msg.payload.username = username;
-	    msg.payload.password = pwd;
-	    ccm.setUsername(username);
-	    ccm.setPwd(pwd);
-	    ccm.addMessage(opID,msg, this);
-	    map.put(new Integer(opID), customer);
-	}
-	public void Logout(int clientID, IClientGUIListener customer)
-	{
-		opID++;
-		LogoutMessageRequest msg=new LogoutMessageRequest(user.getId());
-	    ccm.addMessage(opID,msg, this);
-	    map.put(new Integer(opID), customer);
-	}
-	
-	public void GetArticleList(int clientID,IClientGUIListener customer)
-	{
-		opID++;
-    	ArticleListMessageRequest req=new ArticleListMessageRequest(user.getId(),true);
-		ccm.addMessage(opID,req, this);
-		map.put(new Integer(opID), customer);
+
+    private int opID;
+    private Map<Integer, IClientGUIListener> map;
+    private ClientConnectionManager ccm;
+    
+    private User user;
+    private Vector<Article> offers;
+    private Vector<Article> userArticles;
+
+    public User getUser() {
+        return user;
     }
-	
-	public void GetOfferList(int clientID,IClientGUIListener customer)
-	{
-		opID++;
-    	ArticleListMessageRequest req=new ArticleListMessageRequest(user.getId(),false);
-		ccm.addMessage(opID,req, this);
-		map.put(new Integer(opID), customer);
+
+    public Vector<Article> getOffers() {
+        return offers;
+    }
+
+    public Vector<Article> getUserArticles() {
+        return userArticles;
+    }
+
+
+    public ClientCore() {
+	map = new HashMap<Integer, IClientGUIListener>();
+    }
+
+    public void Login(String username, String pwd, IClientGUIListener customer) {
+	opID++;
+	LoginMessageRequest msg = new LoginMessageRequest();
+	msg.payload = new LoginMessageRequestPayload();
+	msg.payload.username = username;
+	msg.payload.password = pwd;
+	ccm.setUsername(username);
+	ccm.setPwd(pwd);
+	ccm.addMessage(opID, msg, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void Logout(int clientID, IClientGUIListener customer) {
+	opID++;
+	LogoutMessageRequest msg = new LogoutMessageRequest(user.getId());
+	ccm.addMessage(opID, msg, this);
+	map.put(new Integer(opID), customer);
+	ccm.clearCredentials();
+	user=null;
+	offers=null;
+	userArticles=null;
+    }
+
+    public void GetArticleList(int clientID, IClientGUIListener customer) {
+	opID++;
+	ArticleListMessageRequest req = new ArticleListMessageRequest(
+		user.getId(), true);
+	ccm.addMessage(opID, req, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void GetOfferList(int clientID, IClientGUIListener customer) {
+	opID++;
+	ArticleListMessageRequest req = new ArticleListMessageRequest(
+		user.getId(), false);
+	ccm.addMessage(opID, req, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void GetArticleDetails(int articleID, IClientGUIListener customer) {
+	// Not required at the moment
+    }
+
+    public void ChangeArticleData(Article article, IClientGUIListener customer) {
+	opID++;
+	ChangeArticleMessageRequest caMsg = new ChangeArticleMessageRequest(article);
+	ccm.addMessage(opID,caMsg,this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void DeleteArticle(int articleID, IClientGUIListener customer) {
+	opID++;
+	DeleteArticleMessageRequest delMsgReq=new DeleteArticleMessageRequest(articleID);
+	ccm.addMessage(opID,delMsgReq,this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void BuyArticle(Article article, float amount,IClientGUIListener customer) {
+	opID++;
+	ccm.addMessage(opID,new messages.BuyArticleMessageRequest(
+			user.getId(), article, amount),this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void ChangeUserData(User user, IClientGUIListener customer) {
+	opID++;
+	ChangeUserDataMessageRequest numrMsg = new ChangeUserDataMessageRequest(user);
+	ccm.addMessage(opID, numrMsg, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void DeleteUser(int userID, IClientGUIListener customer) {
+	opID++;
+	DeleteUserMessageRequest msg=new DeleteUserMessageRequest(userID);
+	ccm.addMessage(opID, msg, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void CreateUser(User user, String username, String pwd,
+	    IClientGUIListener customer) {
+	opID++;
+	user.setState("UNCONFIRMED");
+	NewUserMessageRequest msg = new NewUserMessageRequest(user,pwd);
+	ccm.addMessage(opID, msg, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    public void ConfirmUser(String username, String pwd, String code,
+	    IClientGUIListener customer) {
+	opID++;
+	NewUserConfirmationCodeRequest msg=new NewUserConfirmationCodeRequest(username,code);
+	ccm.addMessage(opID, msg, this);
+	map.put(new Integer(opID), customer);
+    }
+
+    @Override
+    public void MessageSent(int opID) {
+	IClientGUIListener customer = (IClientGUIListener) map.get(new Integer(
+		opID));
+	customer.confirmMessageSent();
+
+    }
+
+    @Override
+    public void AnswerReceived(int opID, IVBMessage answer) {
+	IClientGUIListener customer = (IClientGUIListener) map.get(new Integer(
+		opID));
+	switch (answer.MsgType()) {
+	case AddArticleMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case ArticleListMessageAnswer:
+	    customer.positiveAnswerReceived(answer.getPayload());
+	    break;
+	case BuyArticleMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case ChangeAreticleMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case ChangeUserDataMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case DeleteArticleMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case DeleteUserMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case LoginMessageAnswer:
+            if(((LoginMessageAnswerPayload)answer.getPayload()).isLoginSucces())
+            {
+                customer.positiveAnswerReceived(answer.getPayload());
+                user=((LoginMessageAnswerPayload)answer.getPayload()).getUserData();
+            }
+            else
+            {
+                customer.failureAnswerReceived("Login failed: "+((LoginMessageAnswerPayload)answer.getPayload()).getFailureReason());
+            }
+	    break;
+	case LogoutMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case NewUserConfirmationCodeAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case NewUserMessageAnswer:
+	    customer.positiveAnswerReceived(null);
+	    break;
+	case OperationFailedAnswer:
+	    customer.failureAnswerReceived(answer.getPayload());
+	    break;
+	default:
+	    break;
 	}
-	
-	public void GetArticleDetails(int articleID,IClientGUIListener customer)
-	{
-		//Not required at the moment
-	}
-	
-	public void ChangeArticleData(Article article,IClientGUIListener customer)
-	{
-		
-	}
-	public void DeleteArticle(int articleID,IClientGUIListener customer){}
-	public void BuyArticle(int articleID,float amount,IClientGUIListener customer){}
-	
-	public void ChangeUserData(User user,IClientGUIListener customer){}
-	public void DeleteUser(int userID,IClientGUIListener customer){}
-	
-	public void CreateUser(User user, String username, String pwd,IClientGUIListener customer){}
-	public void ConfirmUser(String username, String pwd, String code,IClientGUIListener customer){}
-	
-	@Override
-	public void MessageSent(int opID) {
-		IClientGUIListener customer=(IClientGUIListener) map.get(new Integer(opID));
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void AnswerReceived(int opID, IVBMessage answer) {
-		IClientGUIListener customer=(IClientGUIListener) map.get(new Integer(opID));
-		switch (answer.MsgType())
-		{
-		case AddArticleMessageAnswer:
-			break;
-		case AddArticleMessageRequest:
-			break;
-		case ArticleListMessageAnswer:
-			break;
-		case ArticleListMessageRequest:
-			break;
-		case BuyArticleMessageAnswer:
-			break;
-		case BuyArticleMessageRequest:
-			break;
-		case ChangeAreticleMessageAnswer:
-			break;
-		case ChangeArticleMessageRequest:
-			break;
-		case ChangeUserDataMessageAnswer:
-			break;
-		case ChangeUserDataMessageRequest:
-			break;
-		case DeleteArticleMessageAnswer:
-			break;
-		case DeleteArticleMessageRequest:
-			break;
-		case DeleteUserMessageAnswer:
-			break;
-		case DeleteUserMessageRequest:
-			break;
-		case LoginMessageAnswer:
-			break;
-		case LoginMessageRequest:
-			break;
-		case LogoutMessageAnswer:
-			break;
-		case LogoutMessageRequest:
-			break;
-		case NewUserConfirmationCodeAnswer:
-			break;
-		case NewUserConfirmationCodeRequest:
-			break;
-		case NewUserMessageAnswer:
-			break;
-		case NewUserMessageRequest:
-			break;
-		case OperationFailedAnswer:
-			break;
-		default:
-			break;
-		}
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void CommunicationError(int opID, IVBMessage answer) {
-		IClientGUIListener customer=(IClientGUIListener) map.get(new Integer(opID));
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    @Override
+    public void CommunicationError(int opID, IVBMessage answer) {
+	IClientGUIListener customer = (IClientGUIListener) map.get(new Integer(
+		opID));
+	customer.communicationErrorReceived(answer.getPayload());
+    }
 
 }

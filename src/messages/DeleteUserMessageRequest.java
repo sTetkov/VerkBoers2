@@ -2,16 +2,19 @@ package messages;
 
 public class DeleteUserMessageRequest implements IVBMessage {
 
-	@Override
-	public MessageType MsgType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private int userID;
+    public DeleteUserMessageRequest(int userID) {
+	this.userID=userID;
+    }
 
-	@Override
-	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public MessageType MsgType() {
+	return IVBMessage.MessageType.DeleteUserMessageRequest;
+    }
+
+    @Override
+    public Object getPayload() {
+return new Integer(userID);
+    }
 
 }
