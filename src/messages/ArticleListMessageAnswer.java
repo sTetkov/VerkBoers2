@@ -8,7 +8,7 @@ public class ArticleListMessageAnswer implements IVBMessage {
     ArticleListAnswerPayload payload;
 
     public ArticleListMessageAnswer(boolean b, String string,
-	    Vector<Article> articleList) {
+	    Vector<Pair<Article,ReducedUserData>> articleList) {
 	payload = new ArticleListAnswerPayload(b, string, articleList);
     }
 

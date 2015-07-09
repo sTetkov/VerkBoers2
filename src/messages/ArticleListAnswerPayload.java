@@ -7,11 +7,11 @@ import DBClasses.Article;
 
 public class ArticleListAnswerPayload implements Serializable {
 
-    public Vector<Article> getList() {
+    public Vector<Pair<Article,ReducedUserData>> getList() {
 	return list;
     }
 
-    public void setList(Vector<Article> list) {
+    public void setList(Vector<Pair<Article,ReducedUserData>> list) {
 	this.list = list;
     }
 
@@ -31,12 +31,12 @@ public class ArticleListAnswerPayload implements Serializable {
 	this.msg = msg;
     }
 
-    Vector<Article> list;
-    boolean successful;
+    private Vector<Pair<Article,ReducedUserData>> list;
+    private boolean successful;
     String msg;
 
     public ArticleListAnswerPayload(boolean b, String string,
-	    Vector<Article> articleList) {
+	    Vector<Pair<Article,ReducedUserData>> articleList) {
 	list = articleList;
 	successful = b;
 	msg = string;

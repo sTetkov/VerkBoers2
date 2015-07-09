@@ -1,6 +1,5 @@
 package Server;
 
-import Utilities.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -74,7 +73,7 @@ public class DBConnector {
     }
 
     public void Commit() throws SQLException {
-	con.commit();
+    	con.commit();
     }
 
     public void ExecuteAndCommit() throws SQLException {
@@ -97,7 +96,12 @@ public class DBConnector {
 	return s.executeQuery(query);
     }
 
-    void Execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    void Execute() throws SQLException {
+    	ExecuteCommands();
+    }
+    
+    void RollBack() throws SQLException
+    {
+    	con.rollback();
     }
 }

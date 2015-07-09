@@ -26,6 +26,9 @@ import messages.NewUserConfirmationCodeAnswer;
 import messages.NewUserConfirmationCodePayload;
 import messages.NewUserMessageAnswer;
 import messages.NewUserMessageRequestPayload;
+import messages.OperationFailedAnswer;
+import messages.Pair;
+import messages.ReducedUserData;
 
 public class ServerCore implements Runnable {
 
@@ -116,11 +119,18 @@ public class ServerCore implements Runnable {
                     throw new AssertionError(request.MsgType().name());
             }
         } catch (SQLException e) {
-            //do something
+            try {
+				con.RollBack();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+            answer=new OperationFailedAnswer("DB Operation Failure, if this persists please contact the administrators.");
+            customer.requestFailed(answer);
         }
         if (answer == null) {
             customer.requestFailed(null);
         }
+        customer.requestExecuted(answer);
     }
 
     private IVBMessage loginUser(IVBMessage request) throws SQLException {
@@ -295,7 +305,11 @@ public class ServerCore implements Runnable {
     private IVBMessage getArticleList(IVBMessage request) throws SQLException {
         ArticleListMessageRequestPayload data = (ArticleListMessageRequestPayload) (request
                 .getPayload());
-        String query = "SELECT * FROM Artikel WHERE idNutzer";
+        String query = "SELECT u.Vorname as Vorname, u.Nachname as Nachname, u.Ort as Ort, "+
+        				"a.idArtikel as idArtikel, a.Bezeichnung as Bezeichnung, a.Beschreibung as Beschreibung, "+
+        				"a.Gewicht as Gewicht, a.Anzahl as Anzahl, a.MwSt as MwSt, "+
+        				"a.Preis_Brutto as Preis_Brutto, a.Preis_Netto as Preis_Netto, a.AblaufDatum as AblaufDatum, "+
+        				"a.idNutzer as idNutzer, a.Zustand as Zustand FROM Artikel a JOIN User u ON a.idNutzer=u.idNutzer WHERE idNutzer";
         if (data.isShowUserIdArticles()) {
             query += "=" + data.getUserId() + ";";
         } else {
@@ -304,11 +318,12 @@ public class ServerCore implements Runnable {
         }
         System.out.println(query);
         ResultSet rs = con.ExecuteQuery(query);
-        Vector<Article> list = new Vector<Article>();
+        Vector<Pair<Article,ReducedUserData>> list = new Vector<Pair<Article,ReducedUserData>>();
         while (rs.next()) {
             Article art = new Article(data.getUserId());
-            list.add(art);
+            ReducedUserData rud=new ReducedUserData(rs.getString("Vorname")+" "+rs.getString("Nachname"),rs.getString("Ort"));
             art.fillFromResultSet(rs);
+            list.add(new Pair<Article,ReducedUserData>(art,rud));
         }
         ArticleListMessageAnswer answer = new ArticleListMessageAnswer(true, "", list);
         return answer;

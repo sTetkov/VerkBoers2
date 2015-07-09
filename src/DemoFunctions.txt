@@ -1,0 +1,28 @@
+Clientside:
+	-Login
+	-Create new user
+	-Confirm user
+	-Change user Data
+	-Show Offers
+	-Show articles
+	-Create Article
+	-Change Article
+	-buy article
+	-delete article
+	-logout on quit
+	
+Serverside:
+	-Show logged in users
+	-Show articles
+	-Show users
+	-change article state
+	-change user state
+	-send messagge?
+	
+TODO:
+	-Add userData to articleList: DONE
+	-CLIENT:Add user data panel
+	-CLIENT:Add buy panel
+	-CLIENT:Add delete article Panel
+	-SERVER:Add missing panels
+	

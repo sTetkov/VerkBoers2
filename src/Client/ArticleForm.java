@@ -9,6 +9,9 @@ import DBClasses.Article;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
 
+import messages.Pair;
+import messages.ReducedUserData;
+
 /**
  *
  * @author sascha
@@ -97,14 +100,19 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
 
     @Override
     public void positiveAnswerReceived(Object payload) {
-        Vector<Article> artList=null;
+        Vector<Pair<Article,ReducedUserData>> artList=null;
         if(this.userOffer)
             artList=core.getUserArticles();
         else
             artList=core.getOffers();
         DefaultListModel listModel = new DefaultListModel();
-        for(int i=0;i<artList.size();i++)
-            listModel.addElement(artList.get(i));
+        
+        if(this.userOffer)
+        	for(int i=0;i<artList.size();i++)
+        		listModel.addElement(artList.get(i).left);
+        else
+        	for(int i=0;i<artList.size();i++)
+        		listModel.addElement(artList.get(i));
         jList1.setModel(listModel);
         
     }

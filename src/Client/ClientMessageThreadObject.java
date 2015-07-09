@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 import messages.IVBMessage;
 import messages.LoginMessageAnswerPayload;
@@ -25,7 +26,15 @@ public class ClientMessageThreadObject implements Runnable {
 	this.message = message;
     }
 
-    public IVBMessage getMessage() {
+    public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	public IVBMessage getMessage() {
 	return message;
     }
 
@@ -77,6 +86,7 @@ public class ClientMessageThreadObject implements Runnable {
     private String hostName;
     private String username;
     private String password;
+    private int timeout;
     private IVBMessage message;
     private ICSMessageEventReceiver customer;
 
@@ -93,7 +103,7 @@ public class ClientMessageThreadObject implements Runnable {
 	    sep = new InetSocketAddress(hostName, port);
 	    MessagePackage msgPck = new MessagePackage(username, password,
 		    message);
-	    socket.connect(sep);
+	    socket.connect(sep,timeout);
 	    out = new ObjectOutputStream(socket.getOutputStream());
 
 	    out.writeObject(msgPck);
@@ -140,6 +150,11 @@ public class ClientMessageThreadObject implements Runnable {
 		customer.CommunicationError(opID, new OperationFailedAnswer(
 			"Operation Failed: Unknonw answer message"));
 	    }
+	}
+		catch (SocketTimeoutException e){
+			System.out.println(e.getMessage());
+			customer.CommunicationError(opID, new OperationFailedAnswer(
+				    "Connection timout, check your internet connection, if the problem persists please contact the adiministrators."));
 	} catch (IOException e) {
 	    System.out.println(e.getMessage());
 	    customer.CommunicationError(opID, new OperationFailedAnswer(

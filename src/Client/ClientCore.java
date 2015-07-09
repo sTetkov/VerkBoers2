@@ -11,6 +11,8 @@ import messages.LoginMessageRequestPayload;
 import messages.LogoutMessageRequest;
 import messages.NewUserConfirmationCodeRequest;
 import messages.NewUserMessageRequest;
+import messages.Pair;
+import messages.ReducedUserData;
 import DBClasses.Article;
 import DBClasses.User;
 
@@ -29,24 +31,24 @@ public class ClientCore implements ICSMessageEventReceiver {
     private ClientConnectionManager ccm;
     
     private User user;
-    private Vector<Article> offers;
-    private Vector<Article> userArticles;
+    private Vector<Pair<Article,ReducedUserData>> offers;
+    private Vector<Pair<Article,ReducedUserData>> userArticles;
 
     public User getUser() {
         return user;
     }
 
-    public Vector<Article> getOffers() {
+    public Vector<Pair<Article,ReducedUserData>> getOffers() {
         return offers;
     }
 
-    public Vector<Article> getUserArticles() {
+    public Vector<Pair<Article,ReducedUserData>> getUserArticles() {
         return userArticles;
     }
 
 
     public ClientCore() {
-	map = new HashMap<Integer, IClientGUIListener>();
+    	map = new HashMap<Integer, IClientGUIListener>();
     }
 
     public void Login(String username, String pwd, IClientGUIListener customer) {

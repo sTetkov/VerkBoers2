@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import messages.IVBMessage;
+import messages.OperationFailedAnswer;
 
 /**
  *
@@ -115,6 +116,8 @@ public class ServerConnectionManager implements Runnable,IServerAnswerToRequest{
     @Override
     public void requestFailed(IVBMessage msg) {
         try {
+        	if(msg==null)
+        		msg=new OperationFailedAnswer("Operation failed: if this persists please contact the administrator.");
             ObjectOutputStream oos = new ObjectOutputStream(
                     socket.getOutputStream());
             oos.writeObject(msg);

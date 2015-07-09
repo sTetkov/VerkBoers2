@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -61,98 +62,28 @@ public class ClientConnectionManager implements Runnable {
     private SocketAddress sep;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+	private int timeout;
 
-    public ClientConnectionManager() {
+    public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	public ClientConnectionManager() {
 	queue = new LinkedList<ClientMessageThreadObject>();
+	initConnectionParameters();
     }
 
-    public User Login(String username, String pwd)
-	    throws ClientConnectionException {
-	this.username = username;
-	this.pwd = pwd;
-	LoginMessageRequest msg = new LoginMessageRequest();
-	msg.payload = new LoginMessageRequestPayload();
-	msg.payload.username = username;
-	msg.payload.password = pwd;
-	LoginMessageAnswer ans = (LoginMessageAnswer) SendMessage(msg);
-	LoginMessageAnswerPayload payload = ((LoginMessageAnswerPayload) ans
-		.getPayload());
-	if (!payload.isLoginSucces()) {
-	    throw new ClientConnectionException("Failure: "
-		    + payload.getFailureReason());
+    private void initConnectionParameters() {
+    	  hostName="localhost";
+    	  port=10000;
+    	  timeout=3000;
 	}
-	hasCredentials=true;
-	return payload.getUserData();
-    }
 
-    public IVBMessage SendMessage(IVBMessage msg)
-	    throws ClientConnectionException {
-	if(!hasCredentials)
-	    throw new ClientConnectionException("No Credentials");
-	IVBMessage inMsg = null;
-	// TODO manage timeouts and disconnections
-	try {
-	    socket = new Socket();
-	    sep = new InetSocketAddress(hostName, port);
-	    MessagePackage msgPck = new MessagePackage(username, pwd, msg);
-	    socket.connect(sep);
-	    out = new ObjectOutputStream(socket.getOutputStream());
-
-	    out.writeObject(msgPck);
-
-	    in = new ObjectInputStream(socket.getInputStream());
-	    inMsg = (IVBMessage) in.readObject();
-	    socket.close();
-	    switch (inMsg.MsgType()) {
-	    case LoginMessageAnswer: {
-		LoginMessageAnswerPayload payload = (LoginMessageAnswerPayload) inMsg
-			.getPayload();
-		if (!payload.isLoginSucces())
-		    throw new ClientConnectionException("Login failed: "
-			    + payload.getFailureReason());
-	    }
-		break;
-	    case NewUserMessageAnswer:
-		break;
-	    case NewUserConfirmationCodeAnswer:
-		break;
-	    case DeleteUserMessageAnswer:
-		break;
-	    case ChangeUserDataMessageAnswer:
-		break;
-	    case AddArticleMessageAnswer:
-		break;
-	    case DeleteArticleMessageAnswer:
-		break;
-	    case ChangeAreticleMessageAnswer:
-		break;
-	    case ArticleListMessageAnswer:
-		break;
-	    case BuyArticleMessageAnswer:
-		break;
-	    case LogoutMessageAnswer:
-		break;
-	    case OperationFailedAnswer:
-		throw new ClientConnectionException("Operation Failed: "
-			+ ((OperationFailedAnswer) inMsg).getReasons());
-	    default:
-		throw new ClientConnectionException(
-			"Operation Failed: Unknonw answer message");
-	    }
-	} catch (IOException e) {
-	    System.out.println(e.getMessage());
-	    throw new ClientConnectionException("Something failed: "
-		    + e.getMessage());
-	} catch (ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	    throw new ClientConnectionException("Something failed: "
-		    + e.getMessage());
-	}
-	return inMsg;
-    }
-
-    @Override
+	@Override
     public void run() {
 	while (true) {
 	    while (!queue.isEmpty()) {
