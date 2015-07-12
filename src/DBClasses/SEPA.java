@@ -35,8 +35,7 @@ public class SEPA implements IDBObject, IBankData {
     public String getCreateStatement() throws SQLException {
 	String sqlStatement = "INSERT INTO SEPA (IBAN,BIC_SWIFT,idNutzer) VALUE(";
 	sqlStatement += "" + SQLDataUtilities.getSQLDataFormat(iban) + ", ";
-	sqlStatement += "" + SQLDataUtilities.getSQLDataFormat(bic_swift)
-		+ ", ";
+	sqlStatement += "" + SQLDataUtilities.getSQLDataFormat(bic_swift)+ ", ";
 	sqlStatement += "" + SQLDataUtilities.getSQLDataFormat(userId) + ");";
 	return sqlStatement;
     }

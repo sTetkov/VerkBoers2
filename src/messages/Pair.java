@@ -1,6 +1,8 @@
 package messages;
 
-public class Pair<X, Y> { 
+import java.io.Serializable;
+
+public class Pair<X , Y > implements Serializable{ 
 	  public final X left; 
 	  public final Y right; 
 	  public Pair(X left, Y right) { 

@@ -1,17 +1,13 @@
 package Client;
 
-import java.io.IOException;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import DBClasses.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import messages.*;
 
@@ -80,7 +76,7 @@ public class ClientConnectionManager implements Runnable {
     private void initConnectionParameters() {
     	  hostName="localhost";
     	  port=10000;
-    	  timeout=3000;
+    	  timeout=6000;
 	}
 
 	@Override
@@ -92,9 +88,13 @@ public class ClientConnectionManager implements Runnable {
 		thr.setPort(port);
 		thr.setUsername(username);
 		thr.setPassword(pwd);
-		Thread thread = new Thread(thr);
-		thread.start();
+		new Thread(thr).start();
 	    }
+             try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ClientConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
 	}
     }
 

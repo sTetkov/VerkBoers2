@@ -2,22 +2,26 @@ package Server;
 
 import DBClasses.Article;
 import DBClasses.BankConnection;
+import DBClasses.IBankData;
 import DBClasses.SEPA;
 import DBClasses.SQLDataUtilities;
 import DBClasses.Transaction;
 import DBClasses.User;
-import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import messages.AddArticleMessageAnswer;
 import messages.ArticleListMessageAnswer;
 import messages.ArticleListMessageRequestPayload;
 import messages.BuyArticleMessageAnswer;
 import messages.BuyArticleMessageRequestPayload;
 import messages.ChangeArticleMessageAnswer;
+import messages.ChangeUserDataMessageAnswer;
 import messages.DeleteArticleMessageAnswer;
+import messages.GetUpdatedUserDataAnswer;
 import messages.IVBMessage;
 import messages.LoginMessageAnswer;
 import messages.LoginMessageRequestPayload;
@@ -33,8 +37,6 @@ import messages.ReducedUserData;
 public class ServerCore implements Runnable {
 
     private static DBConnector con;
-
-    private boolean waitingForConnection;
 
     private static Vector<LoggedInUser> loggedInUsers;
 
@@ -56,10 +58,10 @@ public class ServerCore implements Runnable {
 
     private static boolean initDBConnector() {
         try {
-            con = new DBConnector("mysql.minet.uni-jena.de", 3307, "ka42juf",
-                    "ka42juf", "Poponi8583");
-	    // con = new DBConnector("", 3306, "ka42juf", "ka42juf",
-            // "Poponi8583");
+            //con = new DBConnector("mysql.minet.uni-jena.de", 3307, "ka42juf",
+            //        "ka42juf", "Poponi8583");
+	     con = new DBConnector("", 3306, "ka42juf", "ka42juf",
+             "Poponi8583");
             return true;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -92,10 +94,10 @@ public class ServerCore implements Runnable {
                     answer = confirmUser(request);
                     break;
                 case DeleteUserMessageRequest:
-                    request = deleteUser(request);
+                    answer = deleteUser(request);
                     break;
                 case ChangeUserDataMessageRequest:
-                    request = changeUserData(request);
+                    answer = changeUserData(request);
                     break;
                 case AddArticleMessageRequest:
                     answer = addArticle(request);
@@ -115,6 +117,9 @@ public class ServerCore implements Runnable {
                 case LogoutMessageRequest:
                     answer = logoutUser(request);
                     break;
+                case GetUpdatedUserDataRequest:
+                    answer=getUpdatedUserData(request);
+                    break;
                 default:
                     throw new AssertionError(request.MsgType().name());
             }
@@ -124,31 +129,37 @@ public class ServerCore implements Runnable {
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-            answer=new OperationFailedAnswer("DB Operation Failure, if this persists please contact the administrators.");
+            answer=new OperationFailedAnswer("DB Operation Failure, if this persists please contact the administrators: \n"+e.getMessage());
             customer.requestFailed(answer);
+            return;
         }
         if (answer == null) {
             customer.requestFailed(null);
+            return;
         }
         customer.requestExecuted(answer);
     }
 
     private IVBMessage loginUser(IVBMessage request) throws SQLException {
-        LoginMessageRequestPayload payload = (LoginMessageRequestPayload) request;
+        LoginMessageRequestPayload payload = (LoginMessageRequestPayload)request.getPayload();
         String userName = payload.username;
         String pwd = payload.password;
         User user = null;
-        if (checkCredentials(userName, pwd) == -1) {
+        LoginMessageAnswer answer=null;
+        if (checkCredentials(userName, pwd) != -1) {
             user = getUser(userName);
         }
         if (user == null) {
-            LoginMessageAnswer answer = new LoginMessageAnswer(false, "Wrong username or passwrod", null);
+            answer = new LoginMessageAnswer(false, "Wrong username or passwrod", null);
             customer.requestExecuted(answer);
         } else {
-            LoginMessageAnswer answer = new LoginMessageAnswer(true, "", user);
+            IBankData bnk=getBankData(user.getId());
+            if(bnk!=null)
+                user.setBankData(bnk);
+            answer = new LoginMessageAnswer(true, "", user);
             customer.requestExecuted(answer);
         }
-        return null;
+        return answer;
     }
 
     private int checkCredentials(String userName, String pwd) throws SQLException {
@@ -197,15 +208,18 @@ public class ServerCore implements Runnable {
         con.AddCommand(cmd);
         con.ExecuteAndCommit();
         User usr = getUser(payload.getUser().geteMail());
-        if (payload.getUser().getBankData().getType() == "SEPA") {
-            SEPA bnk = ((SEPA) payload.getUser().getBankData());
-            bnk.setUserId(usr.getId());
-            con.AddCommand(bnk.getCreateStatement());
-        } else {
-            BankConnection bnk = ((BankConnection) payload.getUser()
-                    .getBankData());
-            bnk.setUserId(usr.getId());
-            con.AddCommand(bnk.getCreateStatement());
+        if(payload.getUser().getBankData()!=null)
+        {
+            if (payload.getUser().getBankData().getType() == "SEPA") {
+                SEPA bnk = ((SEPA) payload.getUser().getBankData());
+                bnk.setUserId(usr.getId());
+                con.AddCommand(bnk.getCreateStatement());
+            } else {
+                BankConnection bnk = ((BankConnection) payload.getUser()
+                        .getBankData());
+                bnk.setUserId(usr.getId());
+                con.AddCommand(bnk.getCreateStatement());
+            }
         }
         Random rnd = new Random();
         String code = "" + rnd.nextInt(999999);
@@ -272,8 +286,42 @@ public class ServerCore implements Runnable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private IVBMessage changeUserData(IVBMessage request) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private IVBMessage changeUserData(IVBMessage request) throws SQLException {
+        User user=(User)request.getPayload();
+        String query=user.getUpdateStatement();
+        System.out.println(query);
+        boolean existingBankData=false;
+        IBankData ibd=getBankData(user.getId());
+        if(ibd!=null)
+            existingBankData=ibd.getType().equals(user.getBankData().getType());
+        con.AddCommand(query);
+        if(!existingBankData)
+        {
+                String bnkQ="";
+                if(user.getBankData().getType().equals("SEPA"))
+                    bnkQ=((SEPA)user.getBankData()).getCreateStatement();
+                    
+                else
+                    bnkQ=((BankConnection)user.getBankData()).getCreateStatement();
+                System.out.println(bnkQ);
+                con.AddCommand(bnkQ);
+        }
+        else
+            {
+            if(user.getBankData()!=null)
+            {
+                String bnkQ="";
+                if(user.getBankData().getType().equals("SEPA"))
+                    bnkQ=((SEPA)user.getBankData()).getUpdateStatement();
+                else
+                    bnkQ=((BankConnection)user.getBankData()).getUpdateStatement();
+                System.out.println(bnkQ);
+                con.AddCommand(bnkQ);
+            }
+        }
+        con.ExecuteAndCommit();
+        ChangeUserDataMessageAnswer answer=new ChangeUserDataMessageAnswer(true,"");
+        return answer;
     }
 
     private IVBMessage addArticle(IVBMessage request) throws SQLException {
@@ -285,7 +333,12 @@ public class ServerCore implements Runnable {
     }
 
     private IVBMessage deleteArticle(IVBMessage request) throws SQLException {
-        Article art = (Article) request.getPayload();
+        Article art = getArticle(((Integer)request.getPayload()).intValue());
+        if(art==null)
+        {
+            OperationFailedAnswer answer=new OperationFailedAnswer("Could not find article");
+            return answer;
+        }
         art.setState("DELETED");
         con.AddCommand(art.getUpdateStatement());
         con.ExecuteAndCommit();
@@ -309,19 +362,21 @@ public class ServerCore implements Runnable {
         				"a.idArtikel as idArtikel, a.Bezeichnung as Bezeichnung, a.Beschreibung as Beschreibung, "+
         				"a.Gewicht as Gewicht, a.Anzahl as Anzahl, a.MwSt as MwSt, "+
         				"a.Preis_Brutto as Preis_Brutto, a.Preis_Netto as Preis_Netto, a.AblaufDatum as AblaufDatum, "+
-        				"a.idNutzer as idNutzer, a.Zustand as Zustand FROM Artikel a JOIN User u ON a.idNutzer=u.idNutzer WHERE idNutzer";
+        				"a.idNutzer as idNutzer, a.Zustand as Zustand FROM Artikel a JOIN Nutzer u ON a.idNutzer=u.idNutzer WHERE u.idNutzer";
         if (data.isShowUserIdArticles()) {
-            query += "=" + data.getUserId() + ";";
+            query += "=" + data.getUserId() + " AND a.Zustand='OK';";
         } else {
             query += " != " + data.getUserId()
-                    + " AND Anzahl>0 AND Zustand='OK';";
+                    + " AND a.Anzahl>0 AND a.Zustand='OK';";
         }
         System.out.println(query);
         ResultSet rs = con.ExecuteQuery(query);
         Vector<Pair<Article,ReducedUserData>> list = new Vector<Pair<Article,ReducedUserData>>();
         while (rs.next()) {
             Article art = new Article(data.getUserId());
-            ReducedUserData rud=new ReducedUserData(rs.getString("Vorname")+" "+rs.getString("Nachname"),rs.getString("Ort"));
+            ReducedUserData rud=null;
+            if(!data.isShowUserIdArticles())
+                rud=new ReducedUserData(rs.getString("Vorname")+" "+rs.getString("Nachname"),rs.getString("Ort"));
             art.fillFromResultSet(rs);
             list.add(new Pair<Article,ReducedUserData>(art,rud));
         }
@@ -354,6 +409,92 @@ public class ServerCore implements Runnable {
     }
 
     private void sendTransactionMails(Transaction trns) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Article getArticle(int articleID) {
+        try {
+            Article art=null;
+            String query = "SELECT * FROM Artikel WHERE idArtikel="+articleID+";";
+            System.out.println(query);
+            ResultSet rs = con.ExecuteQuery(query);
+            while (rs.next()) {
+                art = new Article(0);
+                art.fillFromResultSet(rs);
+            }
+            return art;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    private IBankData getBankData(int id) {
+        IBankData res=null;
+        try {
+            
+            String query="SELECT * FROM SEPA WHERE idNutzer="+id+";";
+            ResultSet rs=con.ExecuteQuery(query);
+            if(rs.next())
+            {
+                res=new SEPA();
+                ((SEPA)res).fillFromResultSet(rs);
+                return res;
+            }
+            query="SELECT * FROM Bankverbindung WHERE idNutzer="+id+";";
+            rs=con.ExecuteQuery(query);
+            if(rs.next())
+            {
+                res= new BankConnection();
+                ((BankConnection)res).fillFromResultSet(rs);
+                return res;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
+    }
+
+    private IVBMessage getUpdatedUserData(IVBMessage request) throws SQLException {
+        int userId=((Integer)request.getPayload()).intValue();
+        User user=getUser(userId);
+        if(user!=null)
+        {
+            GetUpdatedUserDataAnswer answer=new GetUpdatedUserDataAnswer(user);
+            return answer;
+        }
+        else
+        {
+            OperationFailedAnswer answer=new OperationFailedAnswer("Could not find user");
+            return answer;
+        }
+    }
+
+    private User getUser(int userId) throws SQLException {
+        String query = "SELECT * FROM Nutzer WHERE idNutzer="
+                + userId + ";";
+        ResultSet rs = con.ExecuteQuery(query);
+        if (!rs.next()) {
+            throw new SQLException("DATA INCONSISTENCY");
+        }
+        User res = new User();
+        res.fillFromResultSet(rs);
+        query = "SELECT * FROM SEPA WHERE idNutzer=" + res.getId() + ";";
+        rs = con.ExecuteQuery(query);
+        if (rs.next()) {
+            SEPA bnk = new SEPA();
+            bnk.fillFromResultSet(rs);
+            res.setBankData(bnk);
+        } else {
+            query = "SELECT * FROM Bankverbindung WHERE idNutzer="
+                    + res.getId() + ";";
+            rs = con.ExecuteQuery(query);
+            if (rs.next()) {
+                BankConnection bnk = new BankConnection();
+                bnk.fillFromResultSet(rs);
+                res.setBankData(bnk);
+            }
+        }
+        return res;
     }
 }

@@ -8,6 +8,7 @@ package Client;
 import DBClasses.BankConnection;
 import DBClasses.SEPA;
 import DBClasses.User;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,13 +18,27 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements IClientGUI
 
     private ClientCore core;
     private ClientMainFrame parent;
+    private boolean createUser;
+    private boolean waitForUpdatedData;
     /**
      * Creates new form CreateNewUserPanel
      */
-    public CreateNewUserPanel(ClientCore core,ClientMainFrame parent) {
+    public CreateNewUserPanel(ClientCore core,ClientMainFrame parent,boolean createUser) {
         initComponents();
         this.core=core;
         this.parent=parent;
+        this.createUser=createUser;
+        waitForUpdatedData=false;
+        if(!createUser)
+        {
+            fillUserFields();
+            jLabel9.setVisible(false);
+            jLabel15.setVisible(false);
+            pwdField1.setVisible(false);
+            pwdField2.setVisible(false);
+        }
+        else
+            jTabbedPane1.setVisible(false);
     }
 
     /**
@@ -72,8 +87,6 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements IClientGUI
         jLabel15 = new javax.swing.JLabel();
 
         jLabel1.setText("Name:");
-
-        nameField.setText("jTextField1");
 
         jLabel2.setText("Surname:");
 
@@ -309,10 +322,23 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements IClientGUI
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         User user=fillUser();
-        if(user!=null)
+        if(createUser)
         {
-            core.CreateUser(user, mailField.getText(),pwdField1.getText() , this);
-            jButton1.disable();
+            if(user!=null)
+            {
+                core.CreateUser(user, mailField.getText(),pwdField1.getText() , this);
+                jButton1.disable();
+            }
+        }
+        else
+        {
+            if(user!=null)
+            {
+                user.setId(core.getUser().getId());
+                user.setState(core.getUser().getState());
+                core.ChangeUserData(user,this); 
+                jButton1.disable();
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -365,22 +391,52 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements IClientGUI
 
     @Override
     public void confirmMessageSent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void positiveAnswerReceived(Object payload) {
+        if(waitForUpdatedData)
+        {
+            waitForUpdatedData=false;
+            fillUserFields();
+            return;
+        }
+        if(createUser)
+            JOptionPane.showMessageDialog(null, "New user requested, wait for your confirmation code");
+        else
+        {
+            JOptionPane.showMessageDialog(null, "User data changed");
+            core.GetUpdatedUserData(this);
+            waitForUpdatedData=true;
+        }
         parent.backToStart();
     }
 
     @Override
     public void failureAnswerReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       String message="";
+        if(payload!=null)
+        {
+            message=(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 
     @Override
     public void communicationErrorReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                       String message="";
+        if(payload!=null)
+        {
+            message="Comunication error: "+(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 
     private User fillUser() {
@@ -395,25 +451,71 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements IClientGUI
         user.setPlz(plzField.getText());
         user.setCity(cityField.getText());
         user.setCountry(countryField.getText());
-        if(jTabbedPane1.getSelectedIndex()==0)
+        if(!createUser)
         {
-            SEPA sepa=new SEPA();
-            sepa.setIban(IBANField.getText());
-            sepa.setBic_swift(bicField.getText());
-            user.setBankData(sepa);
-        }
-        else
-        {
-            BankConnection bnk=new BankConnection();
-            bnk.setAcctNr(bcActField.getText());
-            bnk.setBankNr(bcBnkNrField.getText());
-            bnk.setBankName(bcBnkNameField.getText());
-            user.setBankData(bnk);
+            if(jTabbedPane1.getSelectedIndex()==0)
+            {
+                SEPA sepa=null;
+                if(core.getUser().getBankData().getType().equals("SEPA"))
+                    sepa=((SEPA)core.getUser().getBankData());
+                else
+                    sepa=new SEPA();
+                sepa.setIban(IBANField.getText());
+                sepa.setBic_swift(bicField.getText());
+                sepa.setUserId(core.getUser().getId());
+                user.setBankData(sepa);
+                
+            }
+            else
+            {
+                BankConnection bnk=null;
+                if(core.getUser().getBankData().getType().equals("Bankverbindung"))
+                    bnk=(BankConnection)core.getUser().getBankData();
+                else
+                    bnk=new BankConnection();
+                bnk.setAcctNr(bcActField.getText());
+                bnk.setBankNr(bcBnkNrField.getText());
+                bnk.setUserId(core.getUser().getId());
+                bnk.setBankName(bcBnkNameField.getText());
+                user.setBankData(bnk);
+            }
         }
         return user;
     }
 
     private boolean checkUserData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
+    }
+
+    private void fillUserFields() {
+        User user=core.getUser();
+        nameField.setText(user.getName());
+        surnameField.setText(user.getSurname());
+        mailField.setText(user.geteMail());
+        strField.setText(user.getStr());
+        nrField.setText(user.getNr());
+        plzField.setText(user.getPlz());
+        cityField.setText(user.getCity());
+        countryField.setText(user.getCountry());
+        if(user.getBankData()!=null)
+        {
+            if(user.getBankData() instanceof SEPA )
+            {
+                SEPA sepa=(SEPA)user.getBankData();
+                jTabbedPane1.setSelectedIndex(0);
+                IBANField.setText(sepa.getIban());
+                bicField.setText(sepa.getBic_swift());
+            }
+            else
+            {
+                BankConnection bnk=(BankConnection)user.getBankData();
+                jTabbedPane1.setSelectedIndex(1);
+                bcActField.setText(bnk.getAcctNr());
+                bcBnkNrField.setText(bnk.getBankNr());
+                bcBnkNameField.setText(bnk.getBankName());
+            }
+        }
+            
     }
 }

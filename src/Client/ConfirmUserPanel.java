@@ -5,6 +5,8 @@
  */
 package Client;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author sascha
@@ -127,7 +129,7 @@ public class ConfirmUserPanel extends javax.swing.JPanel implements IClientGUILi
 
     @Override
     public void confirmMessageSent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -137,11 +139,27 @@ public class ConfirmUserPanel extends javax.swing.JPanel implements IClientGUILi
 
     @Override
     public void failureAnswerReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String message="";
+        if(payload!=null)
+        {
+            message=(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 
     @Override
     public void communicationErrorReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                              String message="";
+        if(payload!=null)
+        {
+            message="Comunication error: "+(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 }

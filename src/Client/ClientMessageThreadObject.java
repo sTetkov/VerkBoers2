@@ -1,9 +1,9 @@
 package Client;
 
+import HelpCLasses.MessagePackage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -22,6 +22,7 @@ public class ClientMessageThreadObject implements Runnable {
 
     public ClientMessageThreadObject(int opID, IVBMessage message,
 	    ICSMessageEventReceiver customer) {
+        this.opID=opID;
 	this.customer = customer;
 	this.message = message;
     }
@@ -146,9 +147,10 @@ public class ClientMessageThreadObject implements Runnable {
 		break;
 	    case OperationFailedAnswer:
 		customer.CommunicationError(opID, inMsg);
+                break;
 	    default:
 		customer.CommunicationError(opID, new OperationFailedAnswer(
-			"Operation Failed: Unknonw answer message"));
+			"Operation Failed: Unknown answer message"));
 	    }
 	}
 		catch (SocketTimeoutException e){

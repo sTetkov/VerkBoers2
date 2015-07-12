@@ -45,7 +45,10 @@ public class ServerConnectionManager implements Runnable,IServerAnswerToRequest{
         {
             running=true;
 	    handleRequest();
-            while(running){}
+            while(running){
+                if(!running)
+                    return;
+            }
         }
     }
 
@@ -88,6 +91,7 @@ public class ServerConnectionManager implements Runnable,IServerAnswerToRequest{
     @Override
     public void requestExecuted(IVBMessage msg) {
         try {
+            
             ObjectOutputStream oos = new ObjectOutputStream(
                     socket.getOutputStream());
             oos.writeObject(msg);

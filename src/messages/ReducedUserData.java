@@ -1,6 +1,8 @@
 package messages;
 
-public class ReducedUserData {
+import java.io.Serializable;
+
+public class ReducedUserData implements Serializable{
 
 	public String getName() {
 		return name;
@@ -25,5 +27,11 @@ public class ReducedUserData {
 	this.name=name;
 	this.address=address;
 	}
+        
+        @Override
+        public String toString()
+        {
+            return name;
+        }
 
 }

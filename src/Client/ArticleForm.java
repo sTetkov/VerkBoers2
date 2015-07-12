@@ -8,6 +8,8 @@ package Client;
 import DBClasses.Article;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import messages.Pair;
 import messages.ReducedUserData;
@@ -21,6 +23,7 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
     private ClientCore core;
     private ClientMainFrame parent;
     private boolean userOffer;
+    
     /**
      * Creates new form ArticleForm
      */
@@ -29,6 +32,10 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
         this.core=core;
         this.parent=parent;
         this.userOffer=userOffer;
+        if(userOffer)
+            jButton3.setText("Delete");
+        else
+            jButton3.setText("Buy");
         updateArticleList();
     }
 
@@ -44,18 +51,29 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setText("Refresh");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Details");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Action");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -66,19 +84,26 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addGap(0, 314, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -86,45 +111,110 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
         updateArticleList();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(jList1.getSelectedIndex()==-1)
+            return;
+        ArticleDetailFrame adf=new ArticleDetailFrame();
+
+        if(userOffer)
+            adf.fillFields(core.getUserArticles().get(jList1.getSelectedIndex()),core,userOffer);
+        else
+            adf.fillFields(core.getOffers().get(jList1.getSelectedIndex()),core,userOffer);
+        adf.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if(jList1.getSelectedIndex()==-1)
+            return;
+        if(userOffer)
+        {
+             int response = JOptionPane.showConfirmDialog(null, "Do you want to delete the selected article?", "Confirm",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+             if (response == JOptionPane.YES_OPTION)
+             {
+                 core.DeleteArticle(core.getUserArticles().get(jList1.getSelectedIndex()).left.getId(), this);
+             }
+        }
+        else
+        {
+            JFrame frame = new JFrame();
+            Object result = JOptionPane.showInputDialog(frame, "Enter the amount you want to buy:");
+            float amount=Float.parseFloat((String)result);
+            Article art=core.getOffers().get(jList1.getSelectedIndex()).left;
+            String message="Are you sure you want to buy "+amount+" of "+art.getShortDescription()+" for a gross price of "+art.getGrossPrice()*amount+" Euro?";
+            int response = JOptionPane.showConfirmDialog(null, message, "Confirm",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION)
+            {
+                core.BuyArticle(art, amount, this);
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void confirmMessageSent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void positiveAnswerReceived(Object payload) {
-        Vector<Pair<Article,ReducedUserData>> artList=null;
-        if(this.userOffer)
-            artList=core.getUserArticles();
+        if(payload!=null)
+        {
+            Vector<Pair<Article,ReducedUserData>> artList=null;
+            if(this.userOffer)
+                artList=core.getUserArticles();
+            else
+                artList=core.getOffers();
+            DefaultListModel listModel = new DefaultListModel();
+
+            if(this.userOffer)
+                    for(int i=0;i<artList.size();i++)
+                            listModel.addElement(getString(artList.get(i).left));
+            else
+                    for(int i=0;i<artList.size();i++)
+                            listModel.addElement(getString(artList.get(i)));
+            jList1.setModel(listModel);
+            validate();
+            repaint();
+        }
         else
-            artList=core.getOffers();
-        DefaultListModel listModel = new DefaultListModel();
-        
-        if(this.userOffer)
-        	for(int i=0;i<artList.size();i++)
-        		listModel.addElement(artList.get(i).left);
-        else
-        	for(int i=0;i<artList.size();i++)
-        		listModel.addElement(artList.get(i));
-        jList1.setModel(listModel);
-        
+        {
+            JOptionPane.showMessageDialog(null, "Request processed succesfully");
+            updateArticleList();
+        }
     }
 
     @Override
     public void failureAnswerReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String message="";
+        if(payload!=null)
+        {
+            message="Failure to get Articles: "+(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 
     @Override
     public void communicationErrorReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                String message="";
+        if(payload!=null)
+        {
+            message="Comunication error: "+(String)payload;
+        }
+        else
+            message="There was an unspecified communication error.";
+        JOptionPane.showMessageDialog(null, message);
+        jButton1.enable();
     }
 
     private void loadArticles() {
@@ -136,5 +226,14 @@ public class ArticleForm extends javax.swing.JPanel implements IClientGUIListene
             core.GetArticleList(core.getUser().getId(), this);
         else
             core.GetOfferList(core.getUser().getId(), this);
+    }
+
+    private String getString(Pair<Article, ReducedUserData> get) {
+        return getString(get.left)+": von "+get.right.toString();
+    }
+
+    private String getString(Article left) {
+        String res=""+left.getId()+" "+left.getShortDescription()+" "+left.getGrossPrice()+" Euro";
+        return res;
     }
 }

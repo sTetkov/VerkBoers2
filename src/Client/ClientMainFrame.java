@@ -5,6 +5,9 @@
  */
 package Client;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author sascha
@@ -12,11 +15,23 @@ package Client;
 public class ClientMainFrame extends javax.swing.JFrame implements IClientGUIListener{
 
     private ClientCore core; 
+    private boolean waitForLogout;
+    private Object author="Sascha Tetkov";
+    private String version="0.1.0";
     /**
      * Creates new form ClientMainFrame
      */
     public ClientMainFrame() {
         initComponents();
+        core = new ClientCore();
+        confirmUserItem.setEnabled(true);
+        logoutItem.setEnabled(false);
+        myArticleItem.setEnabled(false);
+        newArticleItem.setEnabled(false);
+        newUserItem.setEnabled(true);
+        offersItem.setEnabled(false);
+        //quitItem;
+        userDataItem.setEnabled(false);
     }
 
     /**
@@ -30,20 +45,21 @@ public class ClientMainFrame extends javax.swing.JFrame implements IClientGUILis
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem8 = new javax.swing.JMenuItem();
-        jMenuItem9 = new javax.swing.JMenuItem();
+        loginMenuItem = new javax.swing.JMenuItem();
+        newUserItem = new javax.swing.JMenuItem();
+        confirmUserItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        userDataItem = new javax.swing.JMenuItem();
+        myArticleItem = new javax.swing.JMenuItem();
+        offersItem = new javax.swing.JMenuItem();
+        newArticleItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        logoutItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem6 = new javax.swing.JMenuItem();
+        quitItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem7 = new javax.swing.JMenuItem();
+        aboutItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -51,70 +67,93 @@ public class ClientMainFrame extends javax.swing.JFrame implements IClientGUILis
 
         jMenu1.setText("Client");
 
-        jMenuItem1.setText("Login");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        loginMenuItem.setText("Login");
+        loginMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                loginMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(loginMenuItem);
 
-        jMenuItem8.setText("New User");
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+        newUserItem.setText("New User");
+        newUserItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem8ActionPerformed(evt);
+                newUserItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem8);
+        jMenu1.add(newUserItem);
 
-        jMenuItem9.setText("ConfirmUser");
-        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+        confirmUserItem.setText("ConfirmUser");
+        confirmUserItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem9ActionPerformed(evt);
+                confirmUserItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem9);
+        jMenu1.add(confirmUserItem);
         jMenu1.add(jSeparator4);
 
-        jMenuItem2.setText("User");
-        jMenu1.add(jMenuItem2);
-
-        jMenuItem3.setText("My Articles");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        userDataItem.setText("User");
+        userDataItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                userDataItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        jMenu1.add(userDataItem);
 
-        jMenuItem4.setText("Offers");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+        myArticleItem.setText("My Articles");
+        myArticleItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
+                myArticleItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem4);
+        jMenu1.add(myArticleItem);
+
+        offersItem.setText("Offers");
+        offersItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                offersItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(offersItem);
+
+        newArticleItem.setText("New Article");
+        newArticleItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newArticleItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(newArticleItem);
         jMenu1.add(jSeparator2);
 
-        jMenuItem5.setText("Logout");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        logoutItem.setText("Logout");
+        logoutItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                logoutItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem5);
+        jMenu1.add(logoutItem);
         jMenu1.add(jSeparator3);
 
-        jMenuItem6.setText("Quit");
-        jMenu1.add(jMenuItem6);
+        quitItem.setText("Quit");
+        quitItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quitItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(quitItem);
         jMenu1.add(jSeparator1);
 
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Help");
 
-        jMenuItem7.setText("About");
-        jMenu2.add(jMenuItem7);
+        aboutItem.setText("About");
+        aboutItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(aboutItem);
 
         jMenuBar1.add(jMenu2);
 
@@ -134,35 +173,88 @@ public class ClientMainFrame extends javax.swing.JFrame implements IClientGUILis
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginMenuItemActionPerformed
         LoginPanel panel=new LoginPanel(core,this);
         this.setContentPane(panel);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+        validate();
+        repaint();
+    }//GEN-LAST:event_loginMenuItemActionPerformed
 
-    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        CreateNewUserPanel panel=new CreateNewUserPanel(core,this);
+    private void newUserItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newUserItemActionPerformed
+        CreateNewUserPanel panel=new CreateNewUserPanel(core,this,true);
         this.setContentPane(panel);
-    }//GEN-LAST:event_jMenuItem8ActionPerformed
+        validate();
+        repaint();
+    }//GEN-LAST:event_newUserItemActionPerformed
 
-    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+    private void confirmUserItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmUserItemActionPerformed
         ConfirmUserPanel panel=new ConfirmUserPanel(core,this);
         this.setContentPane(panel);
-    }//GEN-LAST:event_jMenuItem9ActionPerformed
+        validate();
+        repaint();
+    }//GEN-LAST:event_confirmUserItemActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void myArticleItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myArticleItemActionPerformed
         ArticleForm panel=new ArticleForm(core,this,true);
         this.setContentPane(panel);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+        validate();
+        repaint();
+    }//GEN-LAST:event_myArticleItemActionPerformed
 
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+    private void offersItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_offersItemActionPerformed
         ArticleForm panel=new ArticleForm(core,this,false);
         this.setContentPane(panel);
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
+        validate();
+        repaint();
+    }//GEN-LAST:event_offersItemActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        core.Logout(core.getUser().getId(), this);
-        this.setContentPane(null);
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    private void newArticleItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newArticleItemActionPerformed
+        ArticleDetailFrame adf=new ArticleDetailFrame();
+        adf.fillFields(null,core,true);
+        adf.setVisible(true);
+    }//GEN-LAST:event_newArticleItemActionPerformed
+
+    private void userDataItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userDataItemActionPerformed
+        CreateNewUserPanel panel=new CreateNewUserPanel(core,this,false);
+        this.setContentPane(panel);
+        validate();
+        repaint();
+    }//GEN-LAST:event_userDataItemActionPerformed
+
+    private void logoutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutItemActionPerformed
+              core.Logout(core.getUser().getId(), this);
+        LoginPanel panel=new LoginPanel(core,this);
+        this.setContentPane(panel);
+        confirmUserItem.setEnabled(true);
+        logoutItem.setEnabled(false);
+        myArticleItem.setEnabled(false);
+        newArticleItem.setEnabled(false);
+        newUserItem.setEnabled(true);
+        offersItem.setEnabled(false);
+        //quitItem;
+        userDataItem.setEnabled(false);
+        validate();
+        repaint();
+    }//GEN-LAST:event_logoutItemActionPerformed
+
+    private void quitItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitItemActionPerformed
+        waitForLogout=true;
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       if(core.getUser()!=null)
+       {
+           core.Logout(core.getUser().getId(), this);
+       }
+       else
+       {
+           this.setVisible(false);
+           this.dispose();
+           System.exit(0);
+       }
+    }//GEN-LAST:event_quitItemActionPerformed
+
+    private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
+        JOptionPane.showMessageDialog(null, "Verkaufsboerse - Client - Ver."+this.version+"\nby "+this.author);
+    }//GEN-LAST:event_aboutItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,49 +292,77 @@ public class ClientMainFrame extends javax.swing.JFrame implements IClientGUILis
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutItem;
+    private javax.swing.JMenuItem confirmUserItem;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
-    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JMenuItem loginMenuItem;
+    private javax.swing.JMenuItem logoutItem;
+    private javax.swing.JMenuItem myArticleItem;
+    private javax.swing.JMenuItem newArticleItem;
+    private javax.swing.JMenuItem newUserItem;
+    private javax.swing.JMenuItem offersItem;
+    private javax.swing.JMenuItem quitItem;
+    private javax.swing.JMenuItem userDataItem;
     // End of variables declaration//GEN-END:variables
 
     void LoginSuccesfull() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String message="Welcome "+core.getUser().getName()+" "+core.getUser().getSurname()+"!";
+        JOptionPane.showMessageDialog(null, message);
+        
+        ArticleForm panel=new ArticleForm(core,this,false);
+        this.setContentPane(panel);
+        
+        //loginMenuItem.setEnabled(false);
+        confirmUserItem.setEnabled(false);
+        logoutItem.setEnabled(true);
+        myArticleItem.setEnabled(true);
+        newArticleItem.setEnabled(true);
+        newUserItem.setEnabled(false);
+        offersItem.setEnabled(true);
+        //quitItem;
+        userDataItem.setEnabled(true);
+        validate();
+        repaint();
+        
     }
 
     void backToStart() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         ArticleForm panel=new ArticleForm(core,this,false);
+        this.setContentPane(panel);
+        validate();
+        repaint();
+        
     }
 
     @Override
     public void confirmMessageSent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       if(waitForLogout)
+       {
+           this.setVisible(false);
+           this.dispose();
+           System.exit(0);
+       }
+           
     }
 
     @Override
     public void positiveAnswerReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void failureAnswerReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void communicationErrorReceived(Object payload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

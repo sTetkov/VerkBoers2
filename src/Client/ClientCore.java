@@ -19,9 +19,10 @@ import DBClasses.User;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import messages.AddArticleMessageRequest;
+import messages.ArticleListAnswerPayload;
+import messages.GetUpdatedUserDataRequest;
 
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import messages.LoginMessageAnswerPayload;
 
 public class ClientCore implements ICSMessageEventReceiver {
@@ -49,6 +50,11 @@ public class ClientCore implements ICSMessageEventReceiver {
 
     public ClientCore() {
     	map = new HashMap<Integer, IClientGUIListener>();
+        ccm=new ClientConnectionManager();
+        ccm.setHostName("localhost");
+        ccm.setPort(10000);
+        ccm.setTimeout(30000);
+        new Thread(ccm).start();
     }
 
     public void Login(String username, String pwd, IClientGUIListener customer) {
@@ -68,8 +74,8 @@ public class ClientCore implements ICSMessageEventReceiver {
 	LogoutMessageRequest msg = new LogoutMessageRequest(user.getId());
 	ccm.addMessage(opID, msg, this);
 	map.put(new Integer(opID), customer);
-	ccm.clearCredentials();
-	user=null;
+	//ccm.clearCredentials();
+	//user=null;
 	offers=null;
 	userArticles=null;
     }
@@ -158,11 +164,24 @@ public class ClientCore implements ICSMessageEventReceiver {
     public void AnswerReceived(int opID, IVBMessage answer) {
 	IClientGUIListener customer = (IClientGUIListener) map.get(new Integer(
 		opID));
+        if(answer==null)
+        {
+            customer.communicationErrorReceived("There seems to be a comunication error of some kind.");
+            return;
+        }
 	switch (answer.MsgType()) {
 	case AddArticleMessageAnswer:
 	    customer.positiveAnswerReceived(null);
 	    break;
 	case ArticleListMessageAnswer:
+            ArticleListAnswerPayload payload=(ArticleListAnswerPayload)answer.getPayload();
+            if(!payload.getList().isEmpty())
+            {
+                if(payload.getList().get(0).right==null)
+                    this.userArticles=payload.getList();
+                else
+                    this.offers=payload.getList();
+            }
 	    customer.positiveAnswerReceived(answer.getPayload());
 	    break;
 	case BuyArticleMessageAnswer:
@@ -183,8 +202,8 @@ public class ClientCore implements ICSMessageEventReceiver {
 	case LoginMessageAnswer:
             if(((LoginMessageAnswerPayload)answer.getPayload()).isLoginSucces())
             {
+                this.user=((LoginMessageAnswerPayload)answer.getPayload()).getUserData();
                 customer.positiveAnswerReceived(answer.getPayload());
-                user=((LoginMessageAnswerPayload)answer.getPayload()).getUserData();
             }
             else
             {
@@ -203,6 +222,10 @@ public class ClientCore implements ICSMessageEventReceiver {
 	case OperationFailedAnswer:
 	    customer.failureAnswerReceived(answer.getPayload());
 	    break;
+        case GetUpdatedUserDataAnswer:
+            customer.positiveAnswerReceived(null);
+            this.user=(User)answer.getPayload();
+            break;
 	default:
 	    break;
 	}
@@ -213,6 +236,21 @@ public class ClientCore implements ICSMessageEventReceiver {
 	IClientGUIListener customer = (IClientGUIListener) map.get(new Integer(
 		opID));
 	customer.communicationErrorReceived(answer.getPayload());
+    }
+
+    void AddNewArticle(Article article, IClientGUIListener customer) {
+        opID++;
+        AddArticleMessageRequest msg=new AddArticleMessageRequest(article);
+        ccm.addMessage(opID, msg, this);
+        map.put(opID, customer);
+    }
+    
+    void GetUpdatedUserData(IClientGUIListener customer)
+    {
+        opID++;
+        GetUpdatedUserDataRequest msg=new GetUpdatedUserDataRequest(this.user.getId());
+        ccm.addMessage(opID, msg, this);
+        map.put(opID, customer);
     }
 
 }
