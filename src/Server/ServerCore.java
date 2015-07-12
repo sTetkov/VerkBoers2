@@ -42,6 +42,10 @@ public class ServerCore implements Runnable {
 
     private static ServerConnectionManager scm=null;
 
+    static Vector<LoggedInUser> getLoggedInUserList() {
+        return loggedInUsers;
+    }
+
     private IServerAnswerToRequest customer;
     private IVBMessage request;
 
@@ -496,5 +500,70 @@ public class ServerCore implements Runnable {
             }
         }
         return res;
+    }
+
+    static boolean loginAdmin(String username, String pwd) {
+        try {
+            String query="SELECT * FROM Admin_login WHERE username='"+username+"' AND pwd='"+pwd+"';";
+            ResultSet rs=con.ExecuteQuery(query);
+            if(!rs.next())
+                return false;
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+          
+    }
+
+    static Vector<User> getUserList() {
+        Vector<User> res=new Vector<User>();
+        try {
+            ResultSet rs=con.ExecuteQuery("SELECT * FROM Nutzer;");
+            while(rs.next())
+            {
+                User user=new User();
+                user.fillFromResultSet(rs);
+                res.add(user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
+    }
+
+    static void setUserState(User user, String state) throws SQLException {
+        user.setState(state);
+        con.AddCommand(user.getUpdateStatement());
+        con.ExecuteAndCommit();
+    }
+    
+    static Vector<Pair<Article, ReducedUserData>> getArticleList() {
+            String query = "SELECT u.Vorname as Vorname, u.Nachname as Nachname, u.Ort as Ort, "+
+                    "a.idArtikel as idArtikel, a.Bezeichnung as Bezeichnung, a.Beschreibung as Beschreibung, "+
+                    "a.Gewicht as Gewicht, a.Anzahl as Anzahl, a.MwSt as MwSt, "+
+                    "a.Preis_Brutto as Preis_Brutto, a.Preis_Netto as Preis_Netto, a.AblaufDatum as AblaufDatum, "+
+                    "a.idNutzer as idNutzer, a.Zustand as Zustand FROM Artikel a JOIN Nutzer u ON a.idNutzer=u.idNutzer;";
+            System.out.println(query);
+            Vector<Pair<Article,ReducedUserData>> list = new Vector<Pair<Article,ReducedUserData>>();
+            try {
+            ResultSet rs = con.ExecuteQuery(query);
+            while (rs.next()) {
+                Article art = new Article(0);
+                ReducedUserData rud=null;
+                rud=new ReducedUserData(rs.getString("Vorname")+" "+rs.getString("Nachname"),rs.getString("Ort"));
+                art.fillFromResultSet(rs);
+                list.add(new Pair<Article,ReducedUserData>(art,rud));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    static void setArticleState(Article article, String state) throws SQLException {
+        article.setState(state);
+        con.AddCommand(article.getUpdateStatement());
+        con.ExecuteAndCommit();
     }
 }
