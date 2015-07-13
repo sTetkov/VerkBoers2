@@ -6,26 +6,25 @@
 package messages;
 
 /**
- *
+ * 
  * @author sascha
  */
-public class GetUpdatedUserDataRequest implements IVBMessage{
+public class GetUpdatedUserDataRequest implements IVBMessage {
 
-    private Integer payload;
-    
-    public GetUpdatedUserDataRequest(int userID)
-    {
-        payload=new Integer(userID);
-    }
-    
-    @Override
-    public MessageType MsgType() {
-        return IVBMessage.MessageType.GetUpdatedUserDataRequest;
-    }
+	private Integer payload;
 
-    @Override
-    public Object getPayload() {
-        return payload;
-    }
-    
+	public GetUpdatedUserDataRequest(int userID) {
+		payload = new Integer(userID);
+	}
+
+	@Override
+	public MessageType MsgType() {
+		return IVBMessage.MessageType.GetUpdatedUserDataRequest;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
+
 }

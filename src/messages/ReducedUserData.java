@@ -2,7 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
-public class ReducedUserData implements Serializable{
+public class ReducedUserData implements Serializable {
 
 	public String getName() {
 		return name;
@@ -22,16 +22,15 @@ public class ReducedUserData implements Serializable{
 
 	private String name;
 	private String address;
-	
-	public ReducedUserData (String name, String address){
-	this.name=name;
-	this.address=address;
+
+	public ReducedUserData(String name, String address) {
+		this.name = name;
+		this.address = address;
 	}
-        
-        @Override
-        public String toString()
-        {
-            return name;
-        }
+
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

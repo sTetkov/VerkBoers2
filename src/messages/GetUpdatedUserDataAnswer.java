@@ -8,24 +8,25 @@ package messages;
 import DBClasses.User;
 
 /**
- *
+ * 
  * @author sascha
  */
-public class GetUpdatedUserDataAnswer implements IVBMessage{
+public class GetUpdatedUserDataAnswer implements IVBMessage {
 
-    private User payload;
-    
-    public GetUpdatedUserDataAnswer(User user)
-    {payload=user;}
-    
-    @Override
-    public MessageType MsgType() {
-        return IVBMessage.MessageType.GetUpdatedUserDataAnswer;
-    }
+	private User payload;
 
-    @Override
-    public Object getPayload() {
-        return payload;
-    }
-    
+	public GetUpdatedUserDataAnswer(User user) {
+		payload = user;
+	}
+
+	@Override
+	public MessageType MsgType() {
+		return IVBMessage.MessageType.GetUpdatedUserDataAnswer;
+	}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
+
 }

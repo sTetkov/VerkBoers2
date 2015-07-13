@@ -17,120 +17,124 @@ import messages.IVBMessage;
 import messages.OperationFailedAnswer;
 
 /**
- *
+ * 
  * @author sascha
  */
-public class ServerConnectionManager implements Runnable,IServerAnswerToRequest{
-    
-    private int port;
-    private Socket socket;
-    private boolean waitingForConnection;
-    private boolean running;
-        
-    public ServerConnectionManager(int serverPort) {
-	this.port = serverPort;
-	waitingForConnection = true;
-    }
+public class ServerConnectionManager implements Runnable,
+		IServerAnswerToRequest {
 
-    public ServerConnectionManager(Socket socket) {
-	this.socket = socket;
-	waitingForConnection = false;
-    }
-    
-    @Override
-    public void run() {
-        if (waitingForConnection)
-	    waitForIncomingRequest();
-	else
-        {
-            running=true;
-	    handleRequest();
-            while(running){
-                if(!running)
-                    return;
-            }
-        }
-    }
+	private int port;
+	private Socket socket;
+	private boolean waitingForConnection;
+	private boolean running;
 
-    private void waitForIncomingRequest() {
-	try {
-	    ServerSocket sSocket = new ServerSocket(port);
-	    while (true) {
-		Socket incoming = sSocket.accept();
-		new Thread(new ServerConnectionManager(incoming)).start();
-	    }
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	public ServerConnectionManager(int serverPort) {
+		this.port = serverPort;
+		waitingForConnection = true;
 	}
 
-    }
-
-    private void handleRequest() {
-	try {
-	    ObjectInputStream ois = new ObjectInputStream(
-		    socket.getInputStream());
-
-	    MessagePackage msgPck = (MessagePackage) ois.readObject();
-	    IVBMessage answer = null;
-            ServerCore reqHandler=new ServerCore(msgPck.getMessage(),this);
-            new Thread(reqHandler).start();    
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	public ServerConnectionManager(Socket socket) {
+		this.socket = socket;
+		waitingForConnection = false;
 	}
 
-    }
+	@Override
+	public void run() {
+		if (waitingForConnection)
+			waitForIncomingRequest();
+		else {
+			running = true;
+			handleRequest();
+			while (running) {
+				if (!running)
+					return;
+			}
+		}
+	}
 
-    @Override
-    public void requestExecuted(IVBMessage msg) {
-        try {
-            
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    socket.getOutputStream());
-            oos.writeObject(msg);
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ServerConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-            running=false;
-        }
-        running=false;
-    }
+	private void waitForIncomingRequest() {
+		try {
+			ServerSocket sSocket = new ServerSocket(port);
+			while (true) {
+				Socket incoming = sSocket.accept();
+				new Thread(new ServerConnectionManager(incoming)).start();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-    @Override
-    public void requestDenied(IVBMessage msg) {
-         try {
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    socket.getOutputStream());
-            oos.writeObject(msg);
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ServerConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-            running=false;
-        }
-         running=false;
-    }
+	}
 
-    @Override
-    public void requestFailed(IVBMessage msg) {
-        try {
-        	if(msg==null)
-        		msg=new OperationFailedAnswer("Operation failed: if this persists please contact the administrator.");
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    socket.getOutputStream());
-            oos.writeObject(msg);
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ServerConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-            running=false;
-        }
-        running=false;
-    }
-    
+	private void handleRequest() {
+		try {
+			ObjectInputStream ois = new ObjectInputStream(
+					socket.getInputStream());
+
+			MessagePackage msgPck = (MessagePackage) ois.readObject();
+			IVBMessage answer = null;
+			ServerCore reqHandler = new ServerCore(msgPck.getMessage(), this);
+			new Thread(reqHandler).start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void requestExecuted(IVBMessage msg) {
+		try {
+
+			ObjectOutputStream oos = new ObjectOutputStream(
+					socket.getOutputStream());
+			oos.writeObject(msg);
+			socket.close();
+		} catch (IOException ex) {
+			Logger.getLogger(ServerConnectionManager.class.getName()).log(
+					Level.SEVERE, null, ex);
+			running = false;
+		}
+		running = false;
+	}
+
+	@Override
+	public void requestDenied(IVBMessage msg) {
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(
+					socket.getOutputStream());
+			oos.writeObject(msg);
+			socket.close();
+		} catch (IOException ex) {
+			Logger.getLogger(ServerConnectionManager.class.getName()).log(
+					Level.SEVERE, null, ex);
+			running = false;
+		}
+		running = false;
+	}
+
+	@Override
+	public void requestFailed(IVBMessage msg) {
+		try {
+			if (msg == null)
+				msg = new OperationFailedAnswer(
+						"Operation failed: if this persists please contact the administrator.");
+			ObjectOutputStream oos = new ObjectOutputStream(
+					socket.getOutputStream());
+			oos.writeObject(msg);
+			socket.close();
+		} catch (IOException ex) {
+			Logger.getLogger(ServerConnectionManager.class.getName()).log(
+					Level.SEVERE, null, ex);
+			running = false;
+		}
+		running = false;
+	}
+
 }

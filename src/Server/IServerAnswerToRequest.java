@@ -8,12 +8,14 @@ package Server;
 import messages.IVBMessage;
 
 /**
- *
+ * 
  * @author sascha
  */
 public interface IServerAnswerToRequest {
-    public void requestExecuted(IVBMessage msg);
-    public void requestDenied(IVBMessage msg);
-    public void requestFailed(IVBMessage msg);
-    
+	public void requestExecuted(IVBMessage msg);
+
+	public void requestDenied(IVBMessage msg);
+
+	public void requestFailed(IVBMessage msg);
+
 }
