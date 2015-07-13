@@ -15,7 +15,6 @@ public class ServerMainFrame extends javax.swing.JFrame {
 
 	private String username;
 	private ServerCore core;
-	private javax.swing.JMenuItem sendMessageMenuItem;
 
 	/**
 	 * Creates new form ServerMainFrame
@@ -34,97 +33,100 @@ public class ServerMainFrame extends javax.swing.JFrame {
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
-	private void initComponents() {
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-		jMenuBar1 = new javax.swing.JMenuBar();
-		jMenu1 = new javax.swing.JMenu();
-		userMenuItem = new javax.swing.JMenuItem();
-		articleMenuItem = new javax.swing.JMenuItem();
-		loggedMenuItem = new javax.swing.JMenuItem();
-		logoutMenuItem = new javax.swing.JMenuItem();
-		quitMenuItem = new javax.swing.JMenuItem();
-		jMenu2 = new javax.swing.JMenu();
-		jMenuItem1 = new javax.swing.JMenuItem();
-		sendMessageMenuItem=new javax.swing.JMenuItem();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        userMenuItem = new javax.swing.JMenuItem();
+        articleMenuItem = new javax.swing.JMenuItem();
+        loggedMenuItem = new javax.swing.JMenuItem();
+        sendMessageMenuItem = new javax.swing.JMenuItem();
+        logoutMenuItem = new javax.swing.JMenuItem();
+        quitMenuItem = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-		jMenu1.setText("Server");
+        jMenu1.setText("Server");
 
-		userMenuItem.setText("User");
-		userMenuItem.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				userMenuItemActionPerformed(evt);
-			}
-		});
-		jMenu1.add(userMenuItem);
+        userMenuItem.setText("User");
+        userMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(userMenuItem);
 
-		articleMenuItem.setText("Articles");
-		articleMenuItem.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				articleMenuItemActionPerformed(evt);
-			}
-		});
-		jMenu1.add(articleMenuItem);
+        articleMenuItem.setText("Articles");
+        articleMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                articleMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(articleMenuItem);
 
-		loggedMenuItem.setText("Logged Users");
-		loggedMenuItem.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				loggedMenuItemActionPerformed(evt);
-			}
-		});
-		jMenu1.add(loggedMenuItem);
+        loggedMenuItem.setText("Logged Users");
+        loggedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loggedMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(loggedMenuItem);
 
-//		sendMessageMenuItem.setText("Send a Message");
-//		sendMessageMenuItem.addActionListener(new java.awt.event.ActionListener() {
-//			public void actionPerformed(java.awt.event.ActionEvent evt) {
-//				sendMessageMenuItemActionPerformed(evt);
-//			}
-//		});
-//		
-//		jMenu1.add(sendMessageMenuItem);
-		
-		logoutMenuItem.setText("Log out");
-		logoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logoutMenuItemActionPerformed(evt);
-			}
-		});
-		
-		jMenu1.add(logoutMenuItem);
+        sendMessageMenuItem.setText("Send Message");
+        sendMessageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendMessageMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(sendMessageMenuItem);
 
-		quitMenuItem.setText("Quit");
-		quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				quitMenuItemActionPerformed(evt);
-			}
-		});
-		jMenu1.add(quitMenuItem);
+        logoutMenuItem.setText("Log out");
+        logoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(logoutMenuItem);
 
-		jMenuBar1.add(jMenu1);
+        quitMenuItem.setText("Quit");
+        quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quitMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(quitMenuItem);
 
-		jMenu2.setText("Help");
+        jMenuBar1.add(jMenu1);
 
-		jMenuItem1.setText("About");
-		jMenu2.add(jMenuItem1);
+        jMenu2.setText("Help");
 
-		jMenuBar1.add(jMenu2);
+        jMenuItem1.setText("About");
+        jMenu2.add(jMenuItem1);
 
-		setJMenuBar(jMenuBar1);
+        jMenuBar1.add(jMenu2);
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 400,
-				Short.MAX_VALUE));
-		layout.setVerticalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 283,
-				Short.MAX_VALUE));
+        setJMenuBar(jMenuBar1);
 
-		pack();
-	}// </editor-fold>//GEN-END:initComponents
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 283, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void sendMessageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMessageMenuItemActionPerformed
+       sendMessagePanel();
+    }//GEN-LAST:event_sendMessageMenuItemActionPerformed
 
 	private void userMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_userMenuItemActionPerformed
 		userPanel();
@@ -146,13 +148,9 @@ public class ServerMainFrame extends javax.swing.JFrame {
 	private void loggedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_loggedMenuItemActionPerformed
 		loggedPanel();
 	}// GEN-LAST:event_loggedMenuItemActionPerformed
-
-	private void sendMessageMenuItemActionPerformed(ActionEvent evt) {
-		sendMessagePanel();		
-	}
 	
 	private void sendMessagePanel() {
-		ServerArticlePanel panel = new ServerArticlePanel();
+		ServerMessagePanel panel = new ServerMessagePanel(username);
 		this.setContentPane(panel);
 		validate();
 		repaint();
@@ -203,18 +201,18 @@ public class ServerMainFrame extends javax.swing.JFrame {
 		});
 	}
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JMenuItem articleMenuItem;
-	private javax.swing.JMenu jMenu1;
-	private javax.swing.JMenu jMenu2;
-	private javax.swing.JMenuBar jMenuBar1;
-	private javax.swing.JMenuItem jMenuItem1;
-	private javax.swing.JMenuItem loggedMenuItem;
-	private javax.swing.JMenuItem logoutMenuItem;
-	private javax.swing.JMenuItem quitMenuItem;
-	private javax.swing.JMenuItem userMenuItem;
-
-	// End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem articleMenuItem;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem loggedMenuItem;
+    private javax.swing.JMenuItem logoutMenuItem;
+    private javax.swing.JMenuItem quitMenuItem;
+    private javax.swing.JMenuItem sendMessageMenuItem;
+    private javax.swing.JMenuItem userMenuItem;
+    // End of variables declaration//GEN-END:variables
 
 	private void loginPanel() {
 		ServerLoginPanel panel = new ServerLoginPanel(this);
@@ -254,6 +252,7 @@ public class ServerMainFrame extends javax.swing.JFrame {
 		articleMenuItem.setEnabled(true);
 		loggedMenuItem.setEnabled(true);
 		logoutMenuItem.setEnabled(true);
+                sendMessageMenuItem.setEnabled(true);
 		userPanel();
 	}
 
@@ -262,6 +261,7 @@ public class ServerMainFrame extends javax.swing.JFrame {
 		articleMenuItem.setEnabled(false);
 		loggedMenuItem.setEnabled(false);
 		logoutMenuItem.setEnabled(false);
+                sendMessageMenuItem.setEnabled(false);
 	}
 
 }

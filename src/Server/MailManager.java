@@ -19,7 +19,8 @@ public class MailManager implements Runnable {
 	final String smtpPort = "587";
 	
 	private int mailType; 	//0: Confirmation Code
-							//1: Transaction Mail
+				//1: Transaction Mail
+                                //2: Private mail
 
 	private Article art;
 	private Transaction trns;
@@ -28,6 +29,10 @@ public class MailManager implements Runnable {
 	
 	private String eMail;
 	private String code;
+        
+        private String adminUserName;
+    private String receipient;
+    private String message;
 	
 	public MailManager(Article art, Transaction trns, User Seller, User Buyer)
 	{
@@ -46,6 +51,14 @@ public class MailManager implements Runnable {
 		this.code=code;
 	}
 	
+        public MailManager(String receipient,String username, String message)
+        {
+            mailType=2;
+            this.receipient=receipient;
+            this.adminUserName=username;
+            this.message=message;
+        }
+        
 	private Properties getProperties() {
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", host);
@@ -129,7 +142,7 @@ public class MailManager implements Runnable {
 
 	}
 
-	public void sendMessageTo(String string, String title, String text) {
+	public void sendMessageTo() {
 		Session session = Session.getDefaultInstance(getProperties(),
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
@@ -137,13 +150,13 @@ public class MailManager implements Runnable {
 					}
 				});
 		try {
-			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-					string));
-			message.setSubject(title);
-			message.setText(text);
-			Transport.send(message);
+			MimeMessage mMessage = new MimeMessage(session);
+			mMessage.setFrom(new InternetAddress(from));
+			mMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(
+					receipient));
+			mMessage.setSubject("Message from "+adminUserName+" from Verkaufsboerse");
+			mMessage.setText(this.message);
+			Transport.send(mMessage);
 			System.out.println("Sent message successfully....");
 
 		} catch (MessagingException mex) {
@@ -156,10 +169,14 @@ public class MailManager implements Runnable {
 		switch(mailType)
 		{
 		case 0:
+                       sendConfirmationCode();
 			break;
 		case 1:
 			SendTransactionMail();
 			break;
+                case 2:
+                    sendMessageTo();
+                    break;
 		}
 		
 	}
