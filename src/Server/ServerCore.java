@@ -160,7 +160,12 @@ public class ServerCore implements Runnable {
 			answer = new LoginMessageAnswer(false,
 					"Wrong username or password", null);
 			customer.requestExecuted(answer);
-		} else {
+		} else if(!user.getState().equals("OK")){
+                    answer = new LoginMessageAnswer(false,
+					"Account blocked", null);
+			customer.requestExecuted(answer);
+                } 
+                else {
 			IBankData bnk = getBankData(user.getId());
 			if (bnk != null)
 				user.setBankData(bnk);

@@ -611,8 +611,11 @@ public class CreateNewUserPanel extends javax.swing.JPanel implements
 			return;
 		}
 		if (createUser)
+                {
 			JOptionPane.showMessageDialog(null,
 					"New user requested, wait for your confirmation code");
+                parent.backToLogin();
+        }
 		else {
 			JOptionPane.showMessageDialog(null, "User data changed");
 			core.GetUpdatedUserData(this);

@@ -6,6 +6,7 @@
 package Client;
 
 import javax.swing.JOptionPane;
+import messages.GenericAnswerPayload;
 
 /**
  * 
@@ -184,7 +185,14 @@ public class ConfirmUserPanel extends javax.swing.JPanel implements
 
 	@Override
 	public void positiveAnswerReceived(Object payload) {
-		parent.backToStart();
+            GenericAnswerPayload pload=(GenericAnswerPayload)payload;
+            if(pload.isOperationSuccess())
+            {
+                JOptionPane.showMessageDialog(null, "Code accepted");
+                    parent.backToLogin();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Error: "+pload.getMsg());
 	}
 
 	@Override

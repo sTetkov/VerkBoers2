@@ -225,18 +225,7 @@ public class ClientMainFrame extends javax.swing.JFrame implements
 
 	private void logoutItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_logoutItemActionPerformed
 		core.Logout(core.getUser().getId(), this);
-		LoginPanel panel = new LoginPanel(core, this);
-		this.setContentPane(panel);
-		confirmUserItem.setEnabled(true);
-		logoutItem.setEnabled(false);
-		myArticleItem.setEnabled(false);
-		newArticleItem.setEnabled(false);
-		newUserItem.setEnabled(true);
-		offersItem.setEnabled(false);
-		// quitItem;
-		userDataItem.setEnabled(false);
-		validate();
-		repaint();
+                backToLogin();
 	}// GEN-LAST:event_logoutItemActionPerformed
 
 	private void quitItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_quitItemActionPerformed
@@ -379,4 +368,19 @@ public class ClientMainFrame extends javax.swing.JFrame implements
 		// throw new UnsupportedOperationException("Not supported yet."); //To
 		// change body of generated methods, choose Tools | Templates.
 	}
+
+    public void backToLogin() {
+        		LoginPanel panel = new LoginPanel(core, this);
+		this.setContentPane(panel);
+		confirmUserItem.setEnabled(true);
+		logoutItem.setEnabled(false);
+		myArticleItem.setEnabled(false);
+		newArticleItem.setEnabled(false);
+		newUserItem.setEnabled(true);
+		offersItem.setEnabled(false);
+		// quitItem;
+		userDataItem.setEnabled(false);
+		validate();
+		repaint();
+    }
 }

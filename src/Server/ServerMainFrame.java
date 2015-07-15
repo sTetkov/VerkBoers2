@@ -6,6 +6,7 @@
 package Server;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 
 /**
  * 
@@ -15,6 +16,8 @@ public class ServerMainFrame extends javax.swing.JFrame {
 
 	private String username;
 	private ServerCore core;
+    private String author="Sascha Tetkov";
+    private String version="0.1.0";
 
 	/**
 	 * Creates new form ServerMainFrame
@@ -104,6 +107,11 @@ public class ServerMainFrame extends javax.swing.JFrame {
         jMenu2.setText("Help");
 
         jMenuItem1.setText("About");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem1);
 
         jMenuBar1.add(jMenu2);
@@ -127,6 +135,11 @@ public class ServerMainFrame extends javax.swing.JFrame {
     private void sendMessageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMessageMenuItemActionPerformed
        sendMessagePanel();
     }//GEN-LAST:event_sendMessageMenuItemActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        JOptionPane.showMessageDialog(null, "Verkaufsboerse - Server - Ver."
+				+ this.version + "\nby " + this.author);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
 	private void userMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_userMenuItemActionPerformed
 		userPanel();

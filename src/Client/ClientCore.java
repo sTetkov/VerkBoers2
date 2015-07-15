@@ -218,7 +218,7 @@ public class ClientCore implements ICSMessageEventReceiver {
 			customer.positiveAnswerReceived(null);
 			break;
 		case NewUserConfirmationCodeAnswer:
-			customer.positiveAnswerReceived(null);
+			customer.positiveAnswerReceived(answer.getPayload());
 			break;
 		case NewUserMessageAnswer:
 			customer.positiveAnswerReceived(null);
