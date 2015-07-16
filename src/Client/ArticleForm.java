@@ -26,7 +26,7 @@ public class ArticleForm extends javax.swing.JPanel implements
 	private boolean userOffer;
 
 	/**
-	 * Creates new form ArticleForm
+	 * Creates new form ArticleForm	pwdField2
 	 */
 	public ArticleForm(ClientCore core, ClientMainFrame parent,
 			boolean userOffer) {

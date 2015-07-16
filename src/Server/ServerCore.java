@@ -62,10 +62,10 @@ public class ServerCore implements Runnable {
 
 	private static boolean initDBConnector() {
 		try {
-			//con = new DBConnector("mysql.minet.uni-jena.de", 3307, "ka42juf",
-			//		"ka42juf", "Poponi8583");
-			 con = new DBConnector("", 3306, "ka42juf", "ka42juf",
-			 "Poponi8583");
+			con = new DBConnector("mysql.minet.uni-jena.de", 3307, "ka42juf",
+					"ka42juf", "Poponi8583");
+			 //con = new DBConnector("", 3306, "ka42juf", "ka42juf",
+			 //"Poponi8583");
 			return true;
 		} catch (InstantiationException e) {
 			e.printStackTrace();
